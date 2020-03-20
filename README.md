@@ -7,3 +7,4 @@ Today I Learned
 - [순환](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH02)
 - [배열, 구조체, 포인터](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH03)
 - [스택](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH04)
+- [큐](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH05)
