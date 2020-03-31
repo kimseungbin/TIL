@@ -10,4 +10,4 @@ Today I Learned
 - [큐](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH05)
 - [연결리스트 1](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH06)
 - [연결리스트 2](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH07)
-
+- [트리](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH08)
