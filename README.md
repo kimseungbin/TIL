@@ -3,6 +3,8 @@ Today I Learned
 
 # 자료구조
 
+학습 교재 : C언어로 쉽게 풀어쓴 자료구조 | 생능출판사
+
 - [자료구조와 알고리즘](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH01)
 - [순환](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH02)
 - [배열, 구조체, 포인터](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH03)
@@ -14,3 +16,4 @@ Today I Learned
 - [우선순위 큐](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH09)
 - [그래프1](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH10)
 - [그래프2](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH11)
+- [정렬](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH12)
