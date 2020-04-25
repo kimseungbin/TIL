@@ -17,3 +17,4 @@ Today I Learned
 - [그래프1](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH10)
 - [그래프2](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH11)
 - [정렬](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH12)
+- [탐색](https://github.com/kimseungbin/TIL/tree/master/DataStructure/CH13)
