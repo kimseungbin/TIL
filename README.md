@@ -1,27 +1,30 @@
 # TIL
 Today I Learned
 
-## 자료구조
+## 목록
 
-학습 교재 : C언어로 쉽게 풀어쓴 자료구조 | 생능출판사
-
-- [자료구조와 알고리즘](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH01)
-- [순환](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH02)
-- [배열, 구조체, 포인터](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH03)
-- [스택](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH04)
-- [큐](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH05)
-- [연결리스트 1](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH06)
-- [연결리스트 2](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH07)
-- [트리](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH08)
-- [우선순위 큐](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH09)
-- [그래프1](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH10)
-- [그래프2](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH11)
-- [정렬](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH12)
-- [탐색](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH13)
-- [해싱](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH14)
-
-## 자바
-
-학습 교재 : 이것이 자바다 | 한빛미디어
-
-- [자바 시작하기](https://github.com/seungbin-kim/TIL/tree/master/Java/CH01)
+<details>
+    <summary><b>자료구조(DataStructure)</b></summary>
+    <ul>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH01">자료구조와 알고리즘</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH02">순환</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH03">배열, 구조체, 포인터</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH04">스택</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH05">큐</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH06">연결리스트 1</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH07">연결리스트 2</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH08">트리</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH09">우선순위 큐</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH10">그래프 1</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH11">그래프 2</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH12">정렬</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH13">탐색</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH14">해싱</a></li>
+    </ul>
+</details>
+<details>
+    <summary><b>자바(Java)</b></summary>
+    <ul>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/CH01">자바 시작하기</a></li>
+    </ul>
+</details>
