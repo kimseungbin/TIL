@@ -1,7 +1,7 @@
 # TIL
 Today I Learned
 
-# 자료구조
+## 자료구조
 
 학습 교재 : C언어로 쉽게 풀어쓴 자료구조 | 생능출판사
 
@@ -20,3 +20,8 @@ Today I Learned
 - [탐색](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH13)
 - [해싱](https://github.com/seungbin-kim/TIL/tree/master/DataStructure/CH14)
 
+## 자바
+
+학습 교재 : 이것이 자바다 | 한빛미디어
+
+- [자바 시작하기](https://github.com/seungbin-kim/TIL/tree/master/Java/CH01)
