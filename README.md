@@ -25,6 +25,7 @@ Today I Learned
 <details>
     <summary><b>자바(Java)</b></summary>
     <ul>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/CH01">자바 시작하기</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/https://github.com/seungbin-kim/TIL/tree/master/Java/1.Starting_Java">자바 시작하기</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/2.Variable_and_Type">변수와 타입</a></li>
     </ul>
 </details>
