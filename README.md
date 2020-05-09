@@ -34,5 +34,6 @@ Today I Learned
     <summary><b>HTML</b></summary>
     <ul>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/01_Starting_HTML">HTML 기본문법</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/02_Semantic_Web">시맨틱 웹</a></li>
     </ul>
 </details>
