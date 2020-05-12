@@ -42,6 +42,8 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/03_Tag_Basic">기본 태그</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/04_Tag_Text">텍스트 관련 태그</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/05_Tag_link">Hyperlink</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/06_Tag_List_And_Table">리스트, 테이블 형식을 위한 태그</a></li>
     </ul>
 </details>
+
 
