@@ -44,8 +44,10 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/05_Tag_link">Hyperlink</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/06_Tag_List_And_Table">리스트, 테이블 형식을 위한 태그</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/07_Tag_Image_And_Multimedia">멀티미디어를 지원하는 태그</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/08_Tag_Forms">폼 태그</a></li>
     </ul>
 </details>
+
 
 
 
