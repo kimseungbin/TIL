@@ -45,8 +45,6 @@
 </html>
 ```
 
-<audio src="assets/audio/beet.wav" controls></audio>
-
 - 웹 브라우저 별로 지원하는 음악 파일 형식이 다르다.
   - 파일 형식에 따라 재생되지 않는 브라우저가 존재한다는 뜻
 
@@ -71,8 +69,6 @@
     </body>
 </html>
 ```
-
-<audio controls><source src="assets/audio/beet.wav" type="audio/mpeg"></audio>
 
 ## 비디오
 
@@ -112,5 +108,3 @@
 </html>
 </!doctype>
 ```
-
-<video width="640" height="360" controls><source src="assets/video/Nature.mp4" type="video/mp4"></video>
