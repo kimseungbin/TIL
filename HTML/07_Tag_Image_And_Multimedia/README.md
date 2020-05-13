@@ -21,15 +21,7 @@
 </html>
 ```
 
-<!DOCTYPE html>
-    <html>
-    <body>
-        <img src="assets/images/multimedia.png" alt="multimedia icon" width="100">
-        <img src="assets/images/wrongname.gif" alt="이미지가 없습니다.">
-    </body>
-</html>
-</!doctype>
-
+<img src="assets/images/multimedia.png" alt="multimedia icon" width="100"><img src="assets/images/wrongname.gif" alt="이미지가 없습니다.">
 
 # 미디어
 
@@ -53,14 +45,7 @@
 </html>
 ```
 
-<!DOCTYPE html>
-<html>
-    <body>
-        <audio src="assets/audio/beet.wav" controls></audio>
-    </body>
-</html>
-</!doctype>
-
+<audio src="assets/audio/beet.wav" controls></audio>
 
 - 웹 브라우저 별로 지원하는 음악 파일 형식이 다르다.
   - 파일 형식에 따라 재생되지 않는 브라우저가 존재한다는 뜻
@@ -87,16 +72,7 @@
 </html>
 ```
 
-<!DOCTYPE html>
-<html>
-    <body>
-        <audio controls>
-            <source src="assets/audio/beet.wav" type="audio/mpeg">
-        </audio>
-    </body>
-</html>
-</!doctype>
-
+<audio controls><source src="assets/audio/beet.wav" type="audio/mpeg"></audio>
 
 ## 비디오
 
@@ -137,11 +113,4 @@
 </!doctype>
 ```
 
-<!DOCTYPE html>
-<html>
-    <body>
-        <video width="640" height="360" controls>
-            <source src="assets/video/Nature.mp4" type="video/mp4">
-        </video>
-    </body>
-</html>
+<video width="640" height="360" controls><source src="assets/video/Nature.mp4" type="video/mp4"></video>
