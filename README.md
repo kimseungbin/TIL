@@ -25,12 +25,12 @@ Today I Learned
 <details>
     <summary><b>자바(Java)</b></summary>
     <ul>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/https://github.com/seungbin-kim/TIL/tree/master/Java/1.Starting_Java">자바 시작하기</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/2.Variable_and_Type">변수와 타입</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/3.Operator">연산자</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/4.Control_Flow">조건문과 반복문</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/5.Reference_Type">참조타입</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/6.Class">클래스</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/https://github.com/seungbin-kim/TIL/tree/master/Java/01_Starting_Java">자바 시작하기</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/02_Variable_and_Type">변수와 타입</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/03_Operator">연산자</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/04_Control_Flow">조건문과 반복문</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/05_Reference_Type">참조타입</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/06_Class">클래스</a></li>
     </ul>
 </details>
 <details>
@@ -50,5 +50,6 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/09_Tag_Structure">레이아웃을 위한 공간분할 태그</a></li>
     </ul>
 </details>
+
 
 
