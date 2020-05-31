@@ -633,3 +633,260 @@ public class MemberExample {
 - 문제가 있어 자바9부터 <b>Deprecated</b>됨
   - Deprecated : 예전 자바 버전에서는 사용되었으나, 현재 버전과 차후 버전에서는 사용하지 말라는 뜻
 - 오류/시점/성능/수행성 모두 보장하지 못함
+
+## Objects 클래스
+
+- Object와 유사한 java.util.Objects 클래스
+  - 객체 비교, 해시코드 생성, null 여부, 객체 문자열 리턴 등의 연산을 수행하는 정적 메소드들로 구성된 Object의 유틸리티 클래스
+- Objects 클래스가 가지고 있는 정적 메소드들
+
+![](./img/Objects.PNG)
+
+### 객체 비교(compare(T a, T b, comparator\<T>c))
+
+- Objects.compare(T a, T b, Comparator\<T>c) 메소드
+  - 두 객체를 비교자(Comparator)로 비교해서 int 값을 리턴
+- java.util.Comparator\<T>
+  - 제네릭 인터페이스 타입으로 두 객체를 비교하는 Compare(T a, T b) 메소드가 정의되어 있음
+  - compare() 메소드의 리턴 타입은 int
+    - a가 b보다 작으면 음수, 같으면 0, 크면 양수를 리턴하도록 구현 클래스를 만들어야 한다.
+
+```java
+public interface Comparator<T> {
+    int compare(T a, T b);
+}
+```
+
+```java
+// 학생 객체에서 학생 번호로 비교하는 StudentComparator 구현 클래스
+public class StudentComparator implements Comparator<Student> {
+  @Override
+  public int compare(Student a, Student b) {
+    if (a.sno < b.sno) return -1;
+    else if (a.sno == b.sno) return 0;
+    else return 1;
+    // return Integer.compare(a.sno, b.sno); 으로 대체가능
+  }
+}
+```
+
+- 세 개의 학생 객체를 StudentComparator로 비교해서 결과를 리턴하는 예제
+
+```java
+public class CompareExample {
+
+  public static void main(String[] args) {
+    Student s1 = new Student(1);
+    Student s2 = new Student(1);
+    Student s3 = new Student(2);
+
+    int result = Objects.compare(s1, s2, new StudentComparator());
+    System.out.println(result);
+    result = Objects.compare(s1, s3, new StudentComparator());
+    System.out.println(result);
+  }
+
+  static class Student {
+    int sno;
+
+    Student(int sno) {
+      this.sno = sno;
+    }
+  }
+
+  static class StudentComparator implements Comparator<Student> {
+    @Override
+    public int compare(Student o1, Student o2) {
+      /*if (o1.sno < o2.sno) return -1;
+      else if(o1.sno == o2.sno) return 0;
+      else return -1;*/
+      return Integer.compare(o1.sno, o2.sno);
+    }
+  }
+
+}
+```
+
+![](./img/CompareExample.PNG)
+
+### 동등 비교(equals()와 deepEquals())
+
+- Objects.equals(Object a, Object b)는 두 객체의 동등을 비교
+  - 아래 표와같은 결과를 리턴
+  - 특이한 점으로, a와 b가 모두 null일 경우 true를 리턴
+  - a와 b가 null이 아닌 경우 a.equals(b)의 결과를 리턴
+
+![](./img/ObjectsEquals.PNG)
+
+- Objects.deepEqulas(Object a, Object b)역시 두 객체의 동등을 비교
+  - a와 b가 서로 다른 배열일 경우
+    - 항목 값이 모두 같다면 true를 리턴
+  - Arrays.deepEquals(Object[] a, Object[] b)와 동일
+
+![](./img/deepEquals.PNG)
+
+```java
+import java.util.Arrays;
+import java.util.Objects;
+
+public class EqualsAndDeepEqualsExample {
+
+  public static void main(String[] args) {
+    Integer o1 = 1000;
+    Integer o2 = 1000;
+    System.out.println(Objects.equals(o1, o2));
+    System.out.println(Objects.equals(o1, null));
+    System.out.println(Objects.equals(null, o2));
+    System.out.println(Objects.equals(null, null));
+    System.out.println(Objects.deepEquals(o1, o2) + "\n");
+
+    Integer[] arr1 = {1, 2};
+    Integer[] arr2 = {1, 2};
+    System.out.println(Objects.equals(arr1, arr2));
+    System.out.println(Objects.deepEquals(arr1, arr2));
+    System.out.println(Arrays.deepEquals(arr1, arr2));
+    System.out.println(Objects.deepEquals(null, arr2));
+    System.out.println(Objects.deepEquals(arr1, null));
+    System.out.println(Objects.deepEquals(null, null));
+  }
+
+}
+```
+
+![](./img/EqAndDeqEx.PNG)
+
+### 해시코드 생성(hash(), hashCode())
+
+- Objects.hash(Object... values) 메소드
+  - 매개값으로 주어진 값들을 이용해 해시코드를 생성하는 역할을 함
+  - 주어진 매개값들로 배열을 생성하고 Arrays.hashCode(Object[])를 호출해서 해시코드를 얻는다.
+    - 이 값을 리턴
+  - 클래스가 hashCode()를 재정의할 때 리턴값을 생성하기 위해 사용하면 좋다.
+  - 클래스가 여러 필드를 가지고 있을 때 이 필드들로부터 해시 코드를 생성하게 된다면
+    - 동일한 필드값을 가지는 객체는 동일한 해시코드를 가질 수 있다.
+
+```java
+@Override
+public int hashCode() { // hashCode()재정의
+    return Objects.hash(field1, field2, field3);
+}
+```
+
+- Objects.hashCode(Object o)는 매개값으로 주어진 객체의 해시코드를 리턴한다.
+  - 때문에 o.hashCode()의 리턴값과 동일하다.
+  - 차이점은 매개값이 null이면 0을 리턴
+
+```java
+// Student 객체의 해시코드를 생성하기 위해 Student의 필드인
+// sno와 name을 매개값으로 해서 Objects.hash() 메소드를 호출.
+import java.util.Objects;
+
+public class HashCodeExample {
+
+  public static void main(String[] args) {
+    Student s1 = new Student(1, "홍길동");
+    Student s2 = new Student(1, "홍길동");
+    System.out.println(s1.hashCode());
+    System.out.println(Objects.hashCode(s2));
+  }
+
+  static class Student {
+    int sno;
+    String name;
+
+    Student(int sno, String name) {
+      this.sno = sno;
+      this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(sno, name);
+      // 학생 번호와 이름이 동일하다면 같은 해시코드를 얻음
+    }
+  }
+
+}
+```
+
+![](./img/HashCodeExample.PNG)
+
+### 널 여부 조사(isNull(), nonNull(), requireNonNull())
+
+- Objects.isNull(Object obj)
+  - 매개값이 null일 경우 true를 리턴
+- nonNull(Object obj)
+  - 매개값이 not null일 경우 true를 리턴
+- requireNonNull()은 아래의 세 가지로 오버로딩 되어 있음
+
+![](./img/requireNonNull.PNG)
+
+- 첫 번째 매개값이 not null이라면 첫 번째 매개값을 리턴
+  - null 이면 모두 NullPointerException을 발생
+- 두 번째 매개값은 NullPointerException의 예외 메시지를 제공
+
+```java
+import java.util.Objects;
+
+public class NullExample {
+
+  public static void main(String[] args) {
+    String str1 = "홍길동";
+    String str2 = null;
+
+    System.out.println(Objects.requireNonNull(str1));
+
+
+    try {
+      String name = Objects.requireNonNull(str2);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+
+    try {
+      String name = Objects.requireNonNull(str2, "이름이 없습니다.");
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+
+    try {										// 두 번째 매개값으로 람다식
+      String name = Objects.requireNonNull(str2, () -> "이름이 없다니깐요");
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+}
+```
+
+![](./img/NullExample.PNG)
+
+### 객체 문자 정보(toString())
+
+- Objects.toString()
+  - 객체의 문자 정보를 리턴
+  - 두 가지로 오버로딩 되어있다.
+
+![](./img/ObjectsToString.PNG)
+
+- 첫 번째 매개값이 not null 이면 toString()으로 얻은 값을 리턴
+  - null 이면 "null" 또는 두 번째 매개값인 nullDefault를 리턴한다.
+
+```java
+import java.util.Objects;
+
+public class ToStringExample {
+
+  public static void main(String[] args) {
+    String str1 = "홍길동";
+    String str2 = null;
+
+    System.out.println(Objects.toString(str1));
+    System.out.println(Objects.toString(str2));
+    System.out.println(Objects.toString(str2, "이름이 없습니다."));
+  }
+
+}
+```
+
+![](./img/ToStringExample.PNG)
