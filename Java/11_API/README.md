@@ -890,3 +890,249 @@ public class ToStringExample {
 ```
 
 ![](./img/ToStringExample.PNG)
+
+## System 클래스
+
+- 자바 프로그램은 운영체제상에서 바로 실행되는 것이 아니다.
+  - JVM 위에서 실행된다.
+- 따라서 운영체제의 모든 기능을 자바 코드로 직접 접근하기 어렵다.
+  - 하지만 java.lang 패키지에 속하는 System 클래스를 이용하면 운영체제의 일부 기능을 이용할 수 있다.
+  - 즉, 프로그램 종료, 키보드로부터 입력, 모니터로 출력, 메모리 정리, 현재 시간 읽기, 시스템 프로퍼티 읽기, 환경 변수 읽기 등이 가능
+- System 클래스의 모든 필드와 메소드는 정적(static) 필드와 정적(static) 메소드로 구성되어 있다.
+
+### 프로그램 종료(exit())
+
+- System 클래스의 exit() 메소드
+  - 현재 실행되고 있는 프로세스를 강제 종료시키는 역할
+- exit() 메소드는 int 매개값을 지정하도록 되어 있다.
+  - 이 값을 종료 상태값이라고 한다.
+  - 일반적으로 정상 종료일 경우 0으로 지정
+    - 비정상 종료일 경우 0 이외의 다른 값을 준다.
+
+```java
+System.exit(0);
+```
+
+- 어떠한 값을 주더라도 종료가 된다.
+  - 만약 특정 값이 입력되었을 경우에만 종료하고 싶다면?
+    - 자바의 보안 관리자를 직접 설정해서 종료 상태값을 확인하면 된다.
+- System.exit()가 실행되면 보안 관리자의 checkExit() 메소드가 자동 호출
+  - 이 메소드에서 종료 상태값을 조사해서 특정 값이 입력되지 않으면  SecurityException을 발생시킴
+    - System.exit()를 호출한 곳에서 예외 처리를 할 수 있도록 해준다.
+- checkExit() 가 정상적으로 실행되면 JVM은 종료가 된다.
+
+```java
+// 종료 상태 값으로 5가 입력되면 JVM을 종료하도록 보안 관리자를 설정
+System.setSecurityManager(new SecurityManager(){
+    @Override
+    public void checkExit(int status) {
+        if (status != 5) {
+            throw new SecurityException();
+        }
+    }
+});
+```
+
+- 종료 상태값이 5일 경우에만 프로세스를 종료하는 예제
+
+```java
+public class ExitExample {
+
+  public static void main(String[] args) {
+    // 보안 관리자 설정
+    System.setSecurityManager(new SecurityManager() {
+      @Override
+      public void checkExit(int status) {
+        if (status != 5) {
+          throw new SecurityException();
+        }
+      }
+    });
+
+    for (int i = 0; i < 10; i++) {
+      // i값 출력
+      System.out.println(i);
+      try {
+        // JVM 종료 요청
+        System.exit(i);
+      } catch (SecurityException e) { }
+    }
+  }
+
+}
+```
+
+![](./img/ExitExample.PNG)
+
+### 쓰레기 수집기 실행(gc())
+
+- 자바는 JVM이 알아서 메모리를 자동으로 관리
+  - JVM은 메모리가 부족할 때, CPU가 한가할 때 쓰레기 수집기 (Garbage Collector)를 실행
+    - 사용하지 않는 객체를 자동 제거
+- new 연산자로 Car 객체를 생성하고 변수 myCar에 객체 번지를 대입했다면?
+
+```java
+Car myCar = new Car();
+```
+
+![](./img/myCar.PNG)
+
+- 만약 변수 myCar = null을 대입하면 myCar는 객체의 번지를 읽게된다.
+  - 더 이상 Car 객체는 사용할 수가 없고, 쓰레기가 된다.
+
+```java
+myCar = null;
+```
+
+![](./img/myCar_null.PNG)
+
+- 변수 myCar가 다른 Car 객체를 참조할 경우도 마찬가지
+  - 이전 객체의 번지를 잃기 때문에 이전 객체는 쓰레기가 된다.
+
+```java
+Car myCar = new Car();	// 이전 참조 객체
+myCar = new Car();		// 현재 참조 객체
+```
+
+![](./img/myCar_new.PNG)
+
+- 쓰레기 수집기는 개발자가 직접 코드로 실행시킬 수 없다.
+  - System.gc() 메소드로 JVM에게 가능한한 빨리 실행해 달라고 요청할 수는 있다.
+- System.gc() 메소드가 호출되면 쓰레기 수집기가 바로 실행되는 것은 아니다.
+  - JVM은 빠른 시간 내에 실행시키기 위해 노력한다.
+
+```java
+System.gc();
+```
+
+- 쓰레기가 생길 때마다 쓰레기 수집기가 동작한다면?
+  - 수행되어야 할 프로그램의 속도가 떨어지기 때문에 성능 측면에서 좋지 않다.
+  - 메모리가 충분하다면 굳이 쓰레기 수집기를 실행할 필요가 없다.
+- gc() 메소드는 메모리가 열악하지 않은 환경이라면 거의 사용할 일이 없다.
+- 쓰레기 수집기는 객체를 삭제하기 전에 마지막으로 객체의 [소멸자](#객체 소멸자(finalize())를 실행한다.
+
+### 현재 시각 읽기(currentTimeMillis(), nano Time())
+
+- System 클래스의 currentTimeMillis() 메소드와 nanoTime 메소드
+  - 컴퓨터의 시계로부터 현재 시간을 읽어
+    - 밀리세컨드(1/1000)초 단위와
+    - 나노세컨드(1/10<sup>9</sup>초) 단위의 long 값을 리턴한다.
+
+```java
+long time = System.currentTimeMillis();
+long time = System.nanoTime();
+```
+
+- 리턴값은 주로 프로그램의 실행 소요 시간 측정에 사용된다.
+  - 프로그램 시작 시 시각을 읽고, 프로그램이 끝날 때 시각을 읽어 차이를 구하면 프로그램 실행 소요 시간
+
+```java
+// for문을 사용해서 1부터 1000000 까지의 합을 구하는데 걸린 시간출력 예제
+public class SystemTimeExample {
+
+  public static void main(String[] args) {
+    long time1 = System.nanoTime(); // 시작 시간 읽기
+
+    int sum = 0;
+    for (int i = 1; i <= 1000000; i++) {
+      sum += i;
+    }
+
+    long time2 = System.nanoTime(); // 끝 시간 읽기
+
+    System.out.println("1~1000000까지의 합 : " + sum);
+    System.out.println("계산에 " + (time2 - time1) + " 나노초가 소요됨");
+  }
+
+}
+```
+
+![](./img/nanoTime.PNG)
+
+### 시스템 프로퍼티 읽기(getProperty())
+
+- 시스템 프로퍼티(System Property)는 JVM이 시작할 때 자동 설정되는 시스템의 속성값을 말한다.
+  - ex)
+    - 운영체제의 종류 및 자바 프로그램을 실행시킨 사용자 아이디
+    - JVM의 버전
+    - 운영체제에서 사용되는 파일 경로 구분자 등
+- 시스템 프로퍼티는 키(key)와 값(value)으로 구성되어 있다.
+- (표)대표적인 키와 값
+
+![](./img/getProperty.PNG)
+
+- 시스템 프로퍼티를 읽어오기 위해 System.getProperty() 메소드를 이용
+  - 시스템 프로퍼티의 키 이름을 매개값으로 받고, 해당 키에 대한 값을 문자열로 리턴한다.
+
+```java
+String value = System.getProperty(String key);
+```
+
+```java
+// 운영체제 이름, 사용자 이름, 사용자 홈 디렉토리를 알아내고 출력하는 예제
+// 또한 모든 시스템 프로퍼티를 키와 값으로 출력
+import java.util.Properties;
+import java.util.Set;
+
+public class GetPropertyExample {
+
+  public static void main(String[] args) {
+    String osName = System.getProperty("os.name");
+    String userName = System.getProperty("user.name");
+    String userHome = System.getProperty("user.home");
+
+    System.out.println("운영체제 이름: " + osName);
+    System.out.println("사용자 이름: " + userName);
+    System.out.println("사용자 홈디렉토리: " + userHome);
+
+    System.out.println("----------------------------");
+    System.out.println(" [ key ]  value ");
+    System.out.println("----------------------------");
+    Properties props = System.getProperties();
+    Set keys = props.keySet();
+    // Set객체로부터 키를 하나씩 얻어내어 문자열로 변환한 다음,
+    // System.getProperty() 메소드로 값을 얻어 키와 값을 모두 출력
+    for (Object objKey : keys) {
+      String key = (String) objKey;
+      String value = System.getProperty(key);
+      System.out.println("[ " + key + " ]  " + value);
+    }
+  }
+
+}
+```
+
+![](./img/GetPropertyExample.PNG)
+
+- System.getProperties() 메소드
+  - 모든 (키, 값) 쌍을 저장하고 있는 Properties 객체를 리턴한다.
+  - 이 객체의 keySet() 메소드를 호출하면 키만으로 구성된 Set 객체를 얻을 수 있다.
+
+### 환경 변수 읽기(getenv())
+
+- 환경 변수(Environment Variable)
+  - 대부분의 운영체제가 실행되는 프로그램들에게 유용한 정보를 제공할 목적으로 제공
+  - 운영체제에서 이름(Name)과 값(Value)으로관리되는 문자열 정보
+  - 운영체제가 설치될 때 기본적인 내용이 설정된다.
+  - 사용자가 직접 설정하거나 응용 프로그램이 설치될 때 자동적으로 추가 설정되기도 한다.
+- 자바는 환경 변수의 값이 필요할 경우 System.getenv() 메소드를 사용
+  - 매개값으로 환경 변수 이름을 주면 값을 리턴한다.
+
+```java
+String value = System.getenv(String name);
+```
+
+- JAVA_HOME 환경 변수의 값을 얻어와서 출력하는 예제
+
+```java
+public class SystemEnvExample {
+
+  public static void main(String[] args) {
+    String javaHome = System.getenv("JAVA_HOME");
+    System.out.println("JAVA_HOME: " + javaHome);
+  }
+
+}
+```
+
+![](./img/EnvExample.PNG)
