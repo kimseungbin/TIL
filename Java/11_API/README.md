@@ -1136,3 +1136,271 @@ public class SystemEnvExample {
 ```
 
 ![](./img/EnvExample.PNG)
+
+## Class 클래스
+
+- 자바는 클래스와 인터페이스의 메타 데이터를 java.lang 패키지에 소속된 Class 클래스로 관리
+  - 메타 데이터란?
+    - 클래스의 이름, 생성자 정보, 필드 정보, 메소드 정보를 말한다.
+
+### Class 객체 얻기(getClass(), forName())
+
+- 프로그램에서 Class 객체를 얻기 위해서는 Object 클래스가 가지고 있는 getClass() 메소드를 이용
+  - Object는 모든 클래스의 최상위 클래스이므로 모든 클래스에서 getClass() 메소드를 호출할 수 있다.
+
+```java
+Class clazz = obj.getClass();
+```
+
+- getClass() 메소드는 해당 클래스로 객체를 생성했을 때만 사용할 수 있다.
+  - 객체를 생성하기 전에 직접 Class 객체를 얻을 수도 있다.
+- Class는 생성자를 감추고 있기 때문에 new 연산자로 객체를 만들 수 없다.
+  - 정적 메소드인 forName()을 이용해야 한다.
+- forName() 메소드
+  - 클래스 전체 이름(패키지가 포함된 이름)을 매개값으로 받고 Class 객체를 리턴한다.
+
+```java
+try {
+    Class clazz = Class.forName(String className);
+} catch (ClassNotFoundException e) {
+}
+```
+
+- Class.forName() 메소드는 매개값으로 주어진 클래스를 찾지 못하면 ClassNotFoundException 예외를 발생
+  - 예외 처리가 필요하다.
+
+```java
+// 두 가지 방법으로 Car 클래스의 Class 객체를 얻고,
+// Class의 메소드를 이용해 클래스의 전체 이름과 간단한 이름 그리고 패키지 이름을 얻어 출력하는 예제
+public class ClassExample {
+
+  public static void main(String[] args) {
+    Car car = new Car();
+    Class clazz1 = car.getClass();
+    System.out.println(clazz1.getName());
+    System.out.println(clazz1.getSimpleName());
+    System.out.println(clazz1.getPackage().getName());
+    System.out.println();
+
+    try {
+      Class clazz2 = Class.forName("test.Car");
+      System.out.println(clazz2.getName());
+      System.out.println(clazz2.getSimpleName());
+      System.out.println(clazz2.getPackage().getName());
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+}
+
+class Car {
+}
+```
+
+![](./img/ClassExample.PNG)
+
+### 리플렉션(getDeclaredConstructors(), getDeclaredFields(), getDeclaredMethods())
+
+- Class 객체를 이용하면 클래스의 생성자, 필드, 메소드 정보를 알아낼 수 있다.
+  - 이것을 리플렉션(Reflection) 이라고 한다.
+- Class 객체는 리플렉션을 위해 `getDeclaredConstructors()`, `getDeclaredFields()`, `getDeclaredMethods()`를 제공하고 있다.
+
+```java
+Constructor[] constructors = clazz.getDeclaredConstructors();
+Field[] fields = clazz.getDeclaredFields();
+Method[] methods = clazz.getDeclaredMethods();
+```
+
+- 세 메소드는 각각 Constructor 배열, Field 배열, Method 배열을 리턴한다.
+- Constructor, Field, Method 클래스는 모두 java.lang.reflect 패키지에 소속되어 있다.
+- `getDeclaredFields()`, `getDeclaredMethods()`는 클래스에 선언된 멤버만 가져온다.
+  - 상속된 멤버는 가져오지 않는다.
+  - 상속된 멤버로 얻고 싶다면?
+    - `getFields()`, `getMethods()`를 이용해야 한다.
+      - 단, public 멤버만 가져온다.
+
+```java
+// Car 클래스에서 선언된 생성자, 필드, 메소드의 정보를 얻고 출력하는 예제
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+public class ReflectionExample {
+
+  public static void main(String[] args) throws Exception {
+    Class clazz = Class.forName("test.Car");
+
+    System.out.println("[클래스 이름]");
+    System.out.println(clazz.getName());
+    System.out.println();
+
+    // 생성자 이름과 매개 변수 정보를 출력
+    System.out.println("[생성자 정보]");
+    Constructor[] constructors = clazz.getDeclaredConstructors();
+    for (Constructor constructor : constructors) {
+      System.out.print(constructor.getName() + "(");
+      Class[] parameters = constructor.getParameterTypes();
+      printParameters(parameters);
+      System.out.println(")");
+    }
+    System.out.println();
+
+    // 필드 타입과 필드 이름을 출력
+    System.out.println("[필드 정보]");
+    Field[] fields = clazz.getDeclaredFields();
+    for (Field field : fields) {
+      System.out.println(field.getType().getSimpleName() + " " + field.getName());
+    }
+    System.out.println();
+
+    // 메소드 이름과 매개 변수를 출력
+    System.out.println("[메소드 정보]");
+    Method[] methods = clazz.getDeclaredMethods();
+    for (Method method : methods) {
+      System.out.print(method.getName() + "(");
+      Class[] parameters = method.getParameterTypes();
+      printParameters(parameters);
+      System.out.println(")");
+    }
+
+  }
+
+  private static void printParameters(Class[] parameters) {
+    for (int i = 0; i < parameters.length; i++) {
+      System.out.print(parameters[i].getName());
+      if (i < (parameters.length - 1)) {
+        System.out.print(",");
+      }
+    }
+  }
+
+}
+
+class Car {
+  private String model;
+  private String owner;
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setModel(String model) {
+    this.model = model;
+  }
+
+  public String getModel() {
+    return model;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+}
+```
+
+![](./img/ReflectionExample.PNG)
+
+- Car 클래스가 자체적으로 가지고 있는 멤버 전체가 출력
+
+### 동적 객체 생성(newInstance())
+
+- Class 객체를 이용하면 new 연산자를 사용하지 않아도 동적으로 객체를 생성할 수 있다.
+  - 코드 작성 시에 클래스 이름을 결정할 수 없고, 런타임 시에 클래스 이름이 결정되는 경우에 매우 유용
+
+```java
+// Class.forName() 메소드로 Class 객체를 얻은다음
+// newInstance() 메소드를 호출하면 Object 타입의 객체를 얻을 수 있다.
+try {
+    Class clazz = Class.forName("런타임 시 결정되는 클래스 이름");
+    Object obj = clazz.newInstance();
+} catch (ClassNotFoundException e) {
+} catch (InstantiationException e) {
+} catch (IllegalAccessException e) {
+}
+```
+
+- newInstacne() 메소드
+  - 기본 생성자를 호출한다.
+    - 때문에 객체를 생성하기 때문에 반드시 클래스에 기본 생성자가 존재해야 한다.
+  - 만약 매개 변수가 있는 생성자를 호출하고 싶다면?
+    - 리플렉션으로 Constructor 객체를 얻어 newInstance() 메소드를 호출하면 된다.
+  - 두 가지 예외가 발생할 수 있다.
+    - InstantiationException 예외 : 해당 클래스가 추상 클래스이거나 인터페이스일 경우에 발생
+    - IllegalAccessException 예외 : 해당 클래스나 생성자가 접근 제한자로 인해 접근할 수 없을 경우 발생
+    - 예외 처리가 필요하다.
+  - 리턴 타입
+    - Object이므로 원래 클래스 타입으로 변환해야만 메소드를 사용할 수 있다.
+      - 강제 타입 변환을 해야함.
+      - 하지만 클래스 타입을 모르는 상태이므로 변환을 할 수가 없다.
+    - 문제를 해결하려면 인터페이스 사용이 필요하다.
+- ex) Action 인터페이스와 구현 클래스인 SendAction, ReceiveAction
+
+![](./img/ActionInterface.PNG)
+
+- Class.forName() 메소드의 매개값으로 "SendAction" 또는 "ReceiveAction"을 주면?
+  - Class 객체가 만들어지고, Class 객체의 newInstance() 메소드로 Object 객체를 얻을 수 있다.
+  - 얻어진 객체는 모두 Action 인터페이스를 구현하고 있기 때문에 Action 인터페이스 타입으로 변환가능
+- Action 인터페이스의 `execute()` 메소드를 호출하면 개별 클래스의 실체 메소드인 `execute()` 메소드 실행
+
+```java
+Class clazz = Class,forName("SendAction" 또는 "ReceiveAction");
+Action action = (Action) clazz.newInstance();
+action.execute(); // SendAction 또는 ReceiveAction의 execute()가 실행됨
+```
+
+- 전체 예제
+
+```java
+// Action.java 인터페이스
+public interface Action {
+  public void execute();
+}
+```
+
+```java
+// SendAction.java 발신 클래스
+public class SendAction implements Action {
+  @Override
+  public void execute() {
+    System.out.println("데이터를 보냅니다.");
+  }
+}
+```
+
+```java
+// ReceiveAction.java 수신 클래스
+public class ReceiveAction implements Action {
+  @Override
+  public void execute() {
+    System.out.println("데이터를 받습니다.");
+  }
+}
+```
+
+```java
+// NewInstanceExample.java 동적 객체 생성 및 실행
+public class NewInstanceExample {
+
+  public static void main(String[] args) {
+    try {
+      Class clazz = Class.forName("test.exam_new_instance.SendAction");
+      //Class clazz = Class.forName("test.exam_new_instance.ReceiveAction");
+      Action action = (Action) clazz.newInstance();
+      action.execute();
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    }
+  }
+
+}
+```
+
+![](./img/NewInstanceExample_1.PNG)
+
+![](./img/NewInstanceExample_2.PNG)
