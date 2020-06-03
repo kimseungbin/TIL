@@ -1404,3 +1404,518 @@ public class NewInstanceExample {
 ![](./img/NewInstanceExample_1.PNG)
 
 ![](./img/NewInstanceExample_2.PNG)
+
+## String 클래스
+
+### String 생성자
+
+- 자바의 문자열
+  - java.lang 패키지의 String 클래스의 인스턴스로 관리된다.
+- 소스상의 문자열 리터럴은 String 객체로 자동생성된다.
+  - 하지만 String 클래스의 다양한 생성자를 이용해서 직접 String 객체를 생성할 수도 있다.
+- String 클래스는 Deprecated(비권장)된 생성자를 제외하고 약 13개의 생성자를 제공
+  - Deprecated : 예전 자바 버전에서는 사용되었으나, 현재 버전과 차후 버전에서는 사용하지 말라는 뜻
+- 사용 빈도수가 높은 생성자들
+
+```java
+/* 파일의 내용을 읽거나, 네트워크를 통해 받은 데이터는 보통 byte[] 배열.
+이것을 문자열로 변환하기 위해 사용된다.*/
+
+// 배열 전체를 String 객체로 생성
+String str = new String(byte[] bytes);
+// 지정한 문자셋으로 디코딩
+String str = new String(byte[] bytes, String charsetName);
+
+// 배열의 offset 인덱스 위치부터 length만큼 String 객체로 생성
+String str = new String(byte[] bytes, int offset, int length);
+// 지정한 문자셋으로 디코딩
+String str = new String(byte[] bytes, int offset, int length, String charsetName)
+```
+
+- 바이트 배열을 문자열로 변환하는 예제
+
+```java
+public class ByteToStringExample {
+
+  public static void main(String[] args) {
+    byte[] bytes = {72, 101, 108, 108, 111, 32, 74, 97, 118, 97};
+
+    String str1 = new String(bytes);
+    System.out.println(str1);
+
+    String str2 = new String(bytes, 6, 4); // 74가 들어있는 위치부터 4개
+    System.out.println(str2);
+  }
+  
+}
+```
+
+![](./img/ByteToStringExample.PNG)
+
+- 키보드로부터 읽은 바이트 배열을 문자열로 변환하는 방법?
+  - System.in.read() 메소드는 키보드에서 입력한 내용을 매개값으로 주어진 바이트 배열에 저장
+    - 읽은 바이트 수를 리턴한다.
+  - ex) Hello를 입력하고 Enter키를 눌렀다면?
+    - Hello + 캐리지리턴(\\r) + 라인피드(\\n)의 코드값이 바이트 배열에 저장됨
+    - 총 7개의 바이트를 읽었기 때문에 7을 리턴
+- 영어는 알파벳 한 자가 1바이트로 표현된다.
+  - 한글과 기타 다른 나라 언어는 2바이트로 표현됨
+  - 때문에 입력된 문자 수와 읽은 바이트 수가 다를 수 있다.
+
+```java
+// 바이트 배열을 문자열로 변환하는 예
+import java.io.IOException;
+
+public class KeyboardToStringExample {
+
+  public static void main(String[] args) throws IOException {
+    byte[] bytes = new byte[100]; // 읽은 바이트를 저장하기 위한 배열
+
+    System.out.print("입력: ");
+    int readByteNo = System.in.read(bytes); // 배열에 읽은 바이트를 저장, 읽은 바이트수 리턴
+
+    						// 인텔리제이 환경에서는 캐리지리턴을 읽지 않아서 -1
+    String str = new String(bytes, 0, readByteNo-1); // 배열을 문자열로 변환
+    System.out.println(str);
+  }
+
+}
+```
+
+![](./img/kbToStrEx.PNG)
+
+### String 메소드
+
+- String은 문자열의 추출, 비교, 찾기, 분리, 변환 등과 같은 다양한 메소드를 가지고 있다.
+- 사용 빈도수가 높은 메소드들
+
+![](./img/String.PNG)
+
+#### 문자 추출(charAt())
+
+- charAt() 메소드는 매개값으로 주어진 인덱스의 문자를 리턴한다.
+  - 인덱스 : 0부터 "문자열길이-1" 까지의 번호
+
+```java
+String subject = "자바 프로그래밍";
+char charValue = subject.charAt(3); // '프' 문자에 해당
+```
+
+- "자바 프로그래밍" 문자열의 인덱스
+
+![](./img/charAt.PNG)
+
+```java
+// 주민등록 번호에서 인덱스 7번 문자를 읽어 남자와 여자를 구별하는 예제
+public class StringCharAtExample {
+
+  public static void main(String[] args) {
+    String ssn = "010624-1230123";
+    char sex = ssn.charAt(7);
+    switch (sex) {
+      case '1':
+      case '3':
+        System.out.println("남자 입니다.");
+        break;
+      case '2':
+      case '4':
+        System.out.println("여자 입니다.");
+        break;
+    }
+  }
+
+}
+```
+
+![](./img/charAtEx.PNG)
+
+#### 문자열 비교(equals())
+
+- 기본 타입(byte, char, short, int, long, float, double, boolean) 변수의 값을 비교할 때
+  - == 연산자를 사용
+- 그러나 문자열을 비교할 때 == 연산자 사용시 원치않는 결과가 나올 수 있다.
+
+```java
+String strVar1 = new String("김승빈");
+String strVar2 = "김승빈";
+String strVar3 = "김승빈";
+```
+
+- 자바는 문자열 리터럴이 동일하다면 동일한 String 객체를 참조한다.
+  - strVar2 와 strVar3은 동일한 String 객체를 참조
+  - 그러나 strVar1은 new 연산자로 생성된 다른 String 객체를 참조
+
+![](./img/StrEquals.PNG)
+
+- 그림과 같은 경우 strVar1 == strVar2 연산은 false를 산출
+  - strVar2 == strVar3 연산은 true를 산출
+- 만약 두 String 객체의 문자열만을 비교하고 싶다면?
+  - == 연산자 대신 equals() 메소드 사용
+
+```java
+strVar1.equals(strVar2) // true
+strVar2.equals(strVar3) // true
+```
+
+- 원래 equals()는 Object의 번지 비교 메소드
+  - String 클래스가 오버라이딩해서 문자열을 비교하도록 변경하였다.
+
+```java
+// 예제
+public class StringEqualsExample {
+
+  public static void main(String[] args) {
+    String strVar1 = new String("신민철");
+    String strVar2 = "신민철";
+
+    if (strVar1 == strVar2) {
+      System.out.println("같은 String 객체를 참조");
+    } else {
+      System.out.println("다른 String 객체를 참조");
+    }
+
+    if (strVar1.equals(strVar2)) {
+      System.out.println("같은 문자열을 가짐");
+    } else {
+      System.out.println("다른 문자열을 가짐");
+    } 
+  }
+
+}
+```
+
+![](./img/StrEqEx.PNG)
+
+#### 바이트 배열로 변환(getBytes())
+
+- 문자열을 바이트 배열로 변환하는 대표적인 예
+  - 네트워크로 문자열을 전송
+  - 문자열을 암호화 할 때
+- 문자열을 바이트 배열로 변환하는 메소드는 두 가지가 있다.
+
+```java
+byte[] bytes = "문자열".getBytes();
+byte[] bytes = "문자열".getBytes(Charset charset);
+```
+
+- getBytes() 메소드는 시스템의 기본 문자셋으로 인코딩된 바이트 배열을 리턴한다.
+- 특정 문자셋으로 인코딩된 바이트 배열을 얻으려면?
+  - `getBytes(Charset charset)`를 사용
+
+```java
+// EUC-KR과 UTF-8로 각각 인코딩된 바이트 배열을 리턴하는 예시
+try {
+    byte[] bytes = "문자열".getBytes("EUC-KR");
+    byte[] bytes = "문자열".getBytes("UTF-8");
+} catch (UnsupportedEncodingException e) {
+}
+```
+
+- 어떤 문자셋으로 인코딩하느냐에 따라 바이트 배열의 크기가 달라진다.
+  - EUC-KR은 getBytes()와 마찬가지로 알파벳 1바이트, 한글 2바이트로 변환
+  - UTF-8은 알파벳 1바이트, 한글 3바이트로 변환
+- getBytes(Charset charset) 메소드는 잘못된 문자셋을 매개값으로 줄 경우 `java.io.UnsupportedEncodingException` 예외가 발생하므로 예외처리가 필요
+- 바이트 배열을 다시 문자열로 변환(디코딩)할 때
+  - 어떤 문자셋으로 인코딩된 바이트 배열이냐에 따라 디코딩 방법이 다르다.
+  - 단순히 String(byte[] bytes) 생성자를 이용해 디코딩하면 시스템의 기본 문자셋을 이용
+
+```java
+// 시스템 기본 문자셋과 다른 문자셋으로 인코딩된 바이트 배열일 경우
+String str = new String(byte[] bytes, String CharsetName);
+```
+
+```java
+// 문자열을 바이트 배열로 인코딩하고, 길이를 출력
+// 다시 String 생성자를 이용해 문자열로 디코딩하는 예제
+import java.io.UnsupportedEncodingException;
+
+public class StringGetBytesExample {
+
+  public static void main(String[] args) {
+    String str = "안녕하세요";
+
+    // 기본 문자셋으로 인코딩과 디코딩
+    byte[] bytes1 = str.getBytes();
+    System.out.println("bytes1.length: " + bytes1.length);
+    String str1 = new String(bytes1);
+    System.out.println("bytes1 -> String: " + str1);
+
+    try {
+
+      byte[] bytes2 = str.getBytes("EUC-KR");
+      System.out.println("bytes2.length: " + bytes2.length);
+      String str2 = new String(bytes2, "EUC-KR");
+      System.out.println("bytes2 -> String: " + str2);
+
+      byte[] bytes3 = str.getBytes("UTF-8");
+      System.out.println("bytes3.length: " + bytes3.length);
+      String str3 = new String(bytes3, "UTF-8");
+      System.out.println("bytes3 -> String: " + str3);
+      
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+  }
+
+}
+```
+
+![](./img/getBytes.PNG)
+
+#### 문자열 찾기(indexOf())
+
+- indexOf() 메소드
+  - 매개값으로 주어진 문자열이 시작되는 인덱스를 리턴
+  - 만약 주어진 문자열이 포함되어 있지 않으면 -1을 리턴
+
+```java
+String subject = "자바 프로그래밍";
+int index = subject.indexOf("프로그래밍"); // 3이 저장되게 됨
+```
+
+- "자바 프로그래밍"에서 "프로그래밍" 문자열의 인덱스 위치가 3이다.
+
+![](./img/indexOf.PNG)
+
+- indexOf() 메소드는 if문의 조건식에서 특정 문자열이 포함되어 있는지 여부에 따라 실행 코드를 달리할 때 자주 사용
+  - -1 값을 리턴하면 특정 문자열이 포함되어 있지 않다는 뜻
+
+```java
+if (문자열.indexOf("찾는문자열") != -1) {
+    // 포함되어 있는 경우
+} else {
+    // 포함되어 있지 않은 경우
+}
+```
+
+```java
+// 문자열 포함 여부 조사 예제
+public class StringIndexOfExample {
+
+  public static void main(String[] args) {
+    String subject = "자바 프로그래밍";
+
+    int location = subject.indexOf("프로그래밍");
+    System.out.println(location);
+
+    if (subject.indexOf("자바") != -1) {
+      System.out.println("자바와 관련된 책이네요.");
+    } else {
+      System.out.println("자바와 관련없는 책이네요.");
+    }
+  }
+
+}
+```
+
+![](./img/indexOfEx.PNG)
+
+#### 문자열 길이(length())
+
+- length() 메소드
+  - 문자열의 길이(문자의 수)를 리턴한다.
+
+```java
+String subject = "자바 프로그래밍";
+int length = subject.length(); // 8이 저장된다.
+```
+
+- subject 객체의 문자열 길이는 공백을 포함해서 8개
+
+![](./img/length.PNG)
+
+```java
+// 문자열의 문자 수 얻기
+public class StringLengthExample {
+
+  public static void main(String[] args) {
+    String ssn = "7306241230123";
+    int length = ssn.length();
+    if (length == 13) {
+      System.out.println("주민번호 자리수가 맞습니다.");
+    } else {
+      System.out.println("주민번호 자리수가 틀립니다.");
+    }
+  }
+
+}
+```
+
+![](./img/lengthEx.PNG)
+
+#### 문자열 대치(replace())
+
+- replace() 메소드
+  - 첫 번째 매개값인 문자열을 찾아 두 번째 매개값인 문자열로 대치한 새로운 문자열을 생성하고 리턴
+
+```java
+String oldStr = "자바 프로그래밍";
+String newStr = oldStr.replace("자바", "JAVA");
+```
+
+- String 객체의 문자열은 변경이 불가한 특성을 갖는다.
+  - 때문에 replace() 메소드가 리턴하는 문자열은 원래 문자열의 수정본이 아니라 완전히 새로운 문자열
+
+![](./img/replace.PNG)
+
+```java
+// 문자열 대치 예제
+public class StringReplaceExample {
+
+  public static void main(String[] args) {
+    String oldStr = "자바는 객체지향언어 입니다. 자바는 풍부한 API를 지원합니다.";
+    String newStr = oldStr.replace("자바", "JAVA");
+    System.out.println(oldStr);
+    System.out.println(newStr);
+  }
+
+}
+```
+
+![](./img/replaceEx.PNG)
+
+#### 문자열 잘라내기(substring())
+
+- substring() 메소드
+  - 주어진 인덱스에서 문자열을 추출
+- 매개값의 수에 따라 두 가지 형태로 사용된다.
+  - substring(int beginIndex, int endIndex)
+    - 주어진 시작과 끝 인덱스 사이의 문자열을 추출
+  - substring(int beginIndex)
+    - 주어진 인덱스부터 끝까지 문자열을 추출
+
+```java
+String ssn = "880815-1234567";
+String firstNum = ssn.substring(0, 6); // 인덱스0(포함) ~ 6(제외) 사이의 문자열을 추출
+String secondNum = ssn.substring(7); // 인덱스 7부터의 문자열을 추출
+```
+
+```java
+// 문자열 추출 예제
+public class StringSubstringExample {
+
+  public static void main(String[] args) {
+    String ssn = "970528-1234567";
+
+    String firstNum = ssn.substring(0, 6);
+    System.out.println(firstNum);
+
+    String secondNum = ssn.substring(7);
+    System.out.println(secondNum);
+  }
+
+}
+```
+
+![](./img/substring.PNG)
+
+#### 알파벳 소/대문자 변경(toLowerCase()m, toUpperCase())
+
+- toLowerCase() 메소드
+  - 문자열을 모두 소문자로 바꾼 새로운 문자열을 생성한 후 리턴
+- toUpperCase() 메소드
+  - 문자열을 모두 대문자로 바꾼 새로운 문자열을 생성한 후 리턴
+
+```java
+String original = "Java Programming";
+String lowerCase = original.toLowerCase(); // 새로 생성된 "java programming" 문자열을 참조
+String upperCase = original.toUpperCase(); // 새로 생성된 "JAVA PROGRAMMING" 문자열을 참조
+```
+
+- 원래의 "Java Programming" 문자열이 변경된 것이 아니다.
+
+![](./img/toLower_toUpper.PNG)
+
+- toLowerCase()와 toUpperCase() 메소드
+  - 영어로 된 두 문자열을 대소문자와 관계없이 비교할 때 주로 이용된다.
+
+```java
+// 두 문자열이 대소문자가 다를 경우 비교하는 예제
+public class StringToLowerUpperCaseExample {
+
+  public static void main(String[] args) {
+    String str1 = "Java Programming";
+    String str2 = "JAVA PROGRAMMING";
+
+    System.out.println(str1.equals(str2));
+
+    String lowerStr1 = str1.toLowerCase();
+    String lowerStr2 = str2.toLowerCase();
+    System.out.println(lowerStr1.equals(lowerStr2));
+
+    // 대소문자를 맞추는 작업을 생략할 수 있다.
+    System.out.println(str1.equalsIgnoreCase(str2));
+  }
+
+}
+```
+
+![](./img/ToLowerUpperEx.PNG)
+
+#### 문자열 앞뒤 공백 잘라내기(trim())
+
+- trim() 메소드
+  - 문자열의 앞뒤 공백을 제거한 새로운 문자열을 생성하고 리턴
+  - 앞뒤의 공백만 제거할 뿐 중간의 공백은 제거하지 않는다.
+
+```java
+String oldeStr = "   자바 프로그래밍   ";
+String newStr = oldStr.trim();
+```
+
+- 원래 문자열의 공백이 제거되는 것이 아니다.
+  - oldStr.trim()은 oldStr의 공백을 제거하는 것이 아니다.
+
+![](./img/trim.PNG)
+
+```java
+// 앞뒤 공백 제거 예제
+public class StringTrimExample {
+
+  public static void main(String[] args) {
+    String tel1 = "   02";
+    String tel2 = "123   ";
+    String tel3 = "   1234   ";
+
+    String tel = tel1.trim() + tel2.trim() + tel3.trim();
+    System.out.println(tel);
+  }
+
+}
+```
+
+![](./img/trimEx.PNG)
+
+#### 문자열 변환(valueOf())
+
+- valueOf() 메소드
+  - 기본 타입의 값을 문자열로 변환하는 기능
+
+```java
+// String 클래스에는 매개 변수의 타입별로 valueOf() 메소드가 오버로딩되어 있다.
+static String valueOf(boolean b)
+static String valueOf(char c)    
+static String valueOf(int i)
+static String valueOf(long l)    
+static String valueOf(double d)    
+static String valueOf(float f)    
+```
+
+```java
+// 기본 타입 값을 문자열로 변환하는 예제
+public class StringValueOfExample {
+
+  public static void main(String[] args) {
+    String str1 = String.valueOf(10);
+    String str2 = String.valueOf(10.5);
+    String str3 = String.valueOf(true);
+
+    System.out.println(str1);
+    System.out.println(str2);
+    System.out.println(str3);
+  }
+
+}
+```
+
+![](./img/valueOf.PNG)
