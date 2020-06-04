@@ -1919,3 +1919,197 @@ public class StringValueOfExample {
 ```
 
 ![](./img/valueOf.PNG)
+
+## StringTokenizer 클래스
+
+- 문자열이 특정 구분자(delimiter)로 연결되어 있을 경우 구분자를 기준으로 부분 문자열을 분리하기 위해서는?
+  - String의 split() 메소드를 이용하거나
+    - split()은 정규 표현식으로 구분
+  - java.util 패키지의 StringTokenizer 클래스를 이용
+    - StringTokenizer는 문자로 구분
+
+### split() 메소드
+
+- String 클래스의 split() 메소드
+  - 정규 표현식을 구분자로 해서 문자열을 분리한 후, 배열에 저장하고 리턴한다.
+
+```java
+String[] result = "문자열".split("정규표현식");
+```
+
+```java
+// 만약 &, 쉼표(,), -을 제외하고 사람 이름만 따로 뽑아내고 싶을 경우엔?
+홍길동&김승빈,박자바,김자바-안자바
+```
+
+```java
+// &, 쉼표(,), - 를 파이프(|) 기호로 연결한 정규 표현식을 매개값으로 제공하면
+// split() 메소드는 이 기호들을 구분자로 해서 부분 문자열을 추출
+String[] names = text.split("&|,|-");
+```
+
+```java
+// 예제
+public class StringSplitExample {
+
+  public static void main(String[] args) {
+    String text = "홍길동&김승빈,박자바,김자바-안자바";
+
+    String[] names = text.split("&|,|-");
+
+    for (String name : names) {
+      System.out.println(name);
+    }
+  }
+
+}
+```
+
+![](./img/split.PNG)
+
+### StringTokenizer 클래스
+
+- 문자열이 한 종류의 구분자로 연결되어 있을 경우
+  - StringTokenizer 클래스를 사용하면 손쉽게 문자열(토큰: token)을 분리해 낼 수 있다.
+  - StringTokenizer 객체를 생성할 때 첫 번째 매개값으로 전체 문자열을 주고, 두 번째 매개값으로 구분자를 준다.
+
+```java
+StringTokenizer st = new StringTokenizer("문자열", "구분자");
+```
+
+- 구분자를 생략한다면 공백(Space)이 기본 구분자가 된다.
+
+```java
+// 문자열이 "/"로 구분되어 있을 경우
+String text = "홍길동/김승빈/김자바";
+StringTokenizer st = new StringTokenizer(text, "/");
+```
+
+- StringTokenizer 객체가 생성되면 부분 문자열을 분리해 낼 수 있다.
+  - 아래 표의 메소드들을 이용해 전체 토큰 수, 남아 있는 토큰 여부를 확인한 다음, 토큰을 읽으면 된다.
+
+![](./img/Token.PNG)
+
+- nextToken() 메소드로 토큰을 하나 꺼내오면 StringTokenizer 객체에는 해당 토큰이 없어진다.
+- 만약 StringTokenizer 객체에서 더 이상 가져올 토큰이 없다면?
+  - nextToken() 메소드는 java.util.NoSuchElementException 예외 발생
+- nextToken() 메소드 사용 전 hasMoreTokens() 메소드로 꺼내올 토큰이 있는지 조사한 후 nextToken() 메소드를 호출하는 것이 좋은 방법
+
+```java
+// StringTokenizer로 토큰 분리
+import java.util.StringTokenizer;
+
+public class StringTokenizerExample {
+
+  public static void main(String[] args) {
+    String text = "홍길동/김승빈/김자바";
+
+    // 1: 전체 토큰 수를 얻어 for문으로 루핑
+    StringTokenizer st = new StringTokenizer(text, "/");
+    int countTokens = st.countTokens();
+    for (int i = 0; i < countTokens; i++) {
+      String token = st.nextToken();
+      System.out.println(token);
+    }
+
+    System.out.println();
+    
+    // 2: 남아 있는 토큰을 확인하고 while문으로 루핑
+    st = new StringTokenizer(text, "/");
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      System.out.println(token);
+    }
+  }
+
+}
+```
+
+![](./img/Tokenizer.PNG)
+
+## StringBuffer, StringBuilder 클래스
+
+- String은 내부의 문자열을 수정할 수 없다.
+  - ex) String의 replace() 메소드는 내부의 문자 대치가 아닌, 대치된 새로운 문자열을 리턴
+  - String 객체를 + 연산할 경우에도 마찬가지
+
+```java
+String data = "ABC";
+data += "DEF";
+```
+
+- String 객체는 내부 데이터를 수정할 수 없으므로 "ABCDEF" 라는 새로운 String 객체가 생성된다.
+  - 변수는 새로 생성된 String 객체를 참조하게 된다.
+
+![](./img/StringPlus.PNG)
+
+- 연산자를 많이 사용할수록 String 객체의 수가 늘어난다.
+  + 때문에 프로그램 성능을 느리게 하는 요인이 된다.
+- 문자열을 변경하는 작업이 많을 경우
+  - String 클래스를 사용하는 것보다 java.lang 패키지의 StringBuffer 또는 StringBuilder 클래스를 사용하는 것이 좋다.
+- StringBuffer, StringBuilder 클래스는 내부 버퍼에 문자열을 저장해 둔다.
+  - 버퍼 안에서 추가, 수정, 삭제 작업을 할 수 있도록 설계되어 있다.
+  - String처럼 새로운 객체를 만들지 않고도 문자열을 조작할 수 있다.
+  - 버퍼(buffer) : 데이터를 임시로 저장하는 메모리
+- StringBuffer, StringBuilder의 사용 방법은 동일하다.
+  - 차이점
+    - StringBuffer는 멀티 스레드 환경에서 사용할 수 있도록 동기화가 적용되어 있어 스레드에 안전
+    - StringBuilder는 단일 스레드 환경에서만 사용하도록 설계되어 있다.
+- StringBuilder 클래스는 몇 가지 생성자를 제공하고 있다.
+  - 기본 생성자인 StringBuilder()
+    - 16개의 문자들을 저장할 수 있는 초기 버퍼를 만든다.
+  - StringBuilder(int capacity) 생성자
+    - capacity로 주어진 개수만큼 문자들을 저장할 수 있는 초기 버퍼를 만든다.
+  - StringBuilder(String str) 생성자
+    - str로 주어진 매개값을 버퍼의 초기값으로 저장한다.
+- StringBuilder는 버퍼가 부족할 경우 자동으로 버퍼 크기를 늘린다.
+  - 그렇기 때문에 초기 버퍼의 크기는 그다지 중요하지 않다.
+
+```java
+StringBuilder sb = new StringBuilder();
+StringBuilder sb = new StringBuilder(16);
+StringBuilder sb = new StringBuilder("java");
+```
+
+- StringBuilder 객체가 생성되면 버퍼 내에서 문자 추가, 삽입, 삭제 등의 작업을 할 수 있다.
+
+![](./img/StringBuilder.PNG)
+
+- append()와 insert() 메소드는 매개 변수가 다양한 타입으로 오버로딩되어 있다.
+  - 때문에 대부분의 값을 문자로 추가 또는 삽입할 수 있다.
+
+```java
+// StringBuilder에서 문자열 조작
+public class StringBuilderExample {
+
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder(); // StringBuilder 객체 생성
+
+    // 문자열을 끝에 추가
+    sb.append("Java ");
+    sb.append("Program Study");
+    System.out.println(sb.toString());
+
+    sb.insert(4, "2"); // index4 위치에 2를 삽입
+    System.out.println(sb.toString());
+
+    sb.setCharAt(4, '6'); // index4 위치의 문자를 6으로 변경
+    System.out.println(sb.toString());
+
+    sb.replace(6, 13, "Book"); // index6부터 index13 '전'까지를 "Book"문자열로 대치
+    System.out.println(sb.toString());
+    
+    sb.delete(4, 5); // index4부터 index5 '전'까지 삭제
+    System.out.println(sb.toString());
+
+    int length = sb.length(); // 총 문자수 얻기
+    System.out.println("총문자수: " + length);
+
+    String result = sb.toString(); // 버퍼에 있는 것을 String 타입으로 리턴
+    System.out.println(result);
+  }
+  
+}
+```
+
+![](./img/StrBdEx.PNG)
