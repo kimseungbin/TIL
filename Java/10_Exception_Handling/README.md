@@ -15,6 +15,7 @@
     - 예외 처리가 없다면 컴파일 오류 발생
   - 실행 예외(Runtime Exception)
     - 컴파일 과정에서 예외 처리 코드를 검사하지 않는 예외
+    - 실행 시 예측할 수 없이 갑자기 발생
   - 두 가지 모두 예외처리가 필요하다.
 - 자바에서는 예외를 클래스로 관리
   - JVM이 예외발생시 해당 예외 클래스로 객체를 생성한다.
@@ -110,8 +111,8 @@ public class ArrayIndexOutOfBoundsExceptionExample {
 
 ![](./img/parse.PNG)
 
-- 포장(Wrapper) 클래스
-  - Integer와 Double
+- Integer와 Double
+  - 포장(Wrapper) 클래스
   - 정적 메소드인 parseXXX()를 이용하여 문자열을 숫자로 변환가능
   - 문자열이 숫자로 변환될 수 있다면 숫자를 리턴
   - 숫자로 변환될 수 없는 문자가 포함되어 있다면 java.lang.NumberFormatException을 발생시킴
@@ -633,6 +634,8 @@ public static void main(String[] args) throws ClassNotFoundException {
     findClass();
 }
 ```
+
+![](./img/main_throws.PNG)
 
 - main()에서 try-catch 블록으로 예외를 최종 처리하는 것이 바람직
   - 알 수 없는 예외 내용을 출력하고 종료되는 것을 좋지 않다.
