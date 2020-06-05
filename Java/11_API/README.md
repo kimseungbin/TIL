@@ -2113,3 +2113,91 @@ public class StringBuilderExample {
 ```
 
 ![](./img/StrBdEx.PNG)
+
+## 정규 표현식과 Pattern 클래스
+
+- 문자열이 정해져 있는 형식(정규 표현식: Regular Expression)으로 구성되어 있는지 검증해야 하는 경우
+  - ex) 이메일, 전화번호를 사용자가 제대로 입력했는지 검증해야 할 때 정규 표현식과 비교한다.
+
+### 정규 표현식 작성 방법
+
+- 정규 표현식은 문자 또는 숫자 기호와 반복 기호가 결합된 문자열이다.
+  - API 도큐먼트에서 java.util.regex.Pattern 클래스를 찾아 Summary of regular-expression constructs를 참조
+- 정규 표현식을 작성하는데 기본적으로 알아두어야 할 기호들에 대한 설명
+
+![](./img/RegularExpression.PNG)
+
+```java
+// 02-123-1234 또는 010-1234-5678과 같은 전화번호를 위한 정규 표현식
+(02|010)-\d{3,4}-d{4}
+```
+
+| 기호      | 설명                  |
+| --------- | --------------------- |
+| (02\|010) | 02 또는 010           |
+| -         | - 포함                |
+| \d{3,4}   | 3자리 또는 4자리 숫자 |
+| -         | - 포함                |
+| \d{4}     | 4자리 숫자            |
+
+```java
+// white@naver.com 과 같은 이메일을 위한 정규 표현식
+\w+@\w+\.\w+(\.\w+)?
+```
+
+| 기호       | 설명                                 |
+| ---------- | ------------------------------------ |
+| \w+        | 한 개 이상의 알파벳 또는 숫자        |
+| @          | @                                    |
+| \w+        | 한 개 이상의 알파벳 또는 숫자        |
+| \\.        | .                                    |
+| \w+        | 한 개 이상의 알파벳 또는 숫자        |
+| (\\.\\w+)? | \\.\\w+이 없거나 한 번 더 올 수 있음 |
+
+- 주의할 점
+  - \\.은 문자로서의 점(.)을 말한다.
+  - . 은 모든 문자 중에서 한 개의 문자를 뜻한다.
+
+### Pattern 클래스
+
+- 정규 표현식으로 문자열을 검증하는 방법
+  - java.util.regex.Pattern 클래스의 정적 메소드인 matches() 메소드가 검증 기능을 제공
+
+```java
+boolean result = Pattern.matches("정규식", "검증할 문자열");
+```
+
+```java
+// 전화번호와 이메일을 검증하는 예제
+import java.util.regex.Pattern;
+
+public class PatternExample {
+
+  public static void main(String[] args) {
+    String regExp = "(02|010)-\\d{3,4}-\\d{4}";
+    String data = "010-123-4567";
+    boolean result = Pattern.matches(regExp, data);
+    if (result) {
+      System.out.println("정규식과 일치합니다.");
+    } else {
+      System.out.println("정규식과 일치하지 않습니다.");
+    }
+
+    regExp = "\\w+@\\w+\\.\\w+(\\.\\w+)?";
+    data = "angel@navercom";
+    result = Pattern.matches(regExp, data);
+    if (result) {
+      System.out.println("정규식과 일치합니다.");
+    } else {
+      System.out.println("정규식과 일치하지 않습니다.");
+    }
+  }
+
+}
+```
+
+![](./img/PatEx.PNG)
+
+- 이메일 검증에서 일치하지 않는 이유
+  - naver.com 이 아닌 navercom 이라고 되어 있기 때문
+  - 반드시 점(.)과 한 개 이상의 알파벳 또는 숫자가 포함되어야 한다.
