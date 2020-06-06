@@ -2432,3 +2432,198 @@ public class SearchExample {
 ```
 
 ![](./img/SearchExample.PNG)
+
+## Wrapper(포장) 클래스
+
+- 자바는 기본 타입(byte, char, short, int, long, float, double, boolean)의 값을 갖는 객체를 생성할 수 있다.
+  - 이런 객체를 포장(Wrapper) 객체라고 한다.
+- 포장 객체라고 부르는 이유?
+  - 기본 타입의 값을 내부에 두고 포장하기 때문
+- 포장 객체의 특징
+  - 포장하고 있는 기본 타입 값은 외부에서 변경할 수 없다.
+  - 만약 내부의 값을 변경하고 싶다면?
+    - 새로운 포장 객체를 만들어야 한다.
+- 포장 클래스는 java.lang 패키지에 포함되어 있다.
+  - 기본 타입에 대응되는 클래스들이 있다.
+  - char 타입과 int 타입이 각각 Character와 Interger로 변경
+  - 기본 타입의 첫 문자를 대문자로 바꾼 이름을 가지고 있다.
+
+![](./img/Wrapper.PNG)
+
+### 박싱(Boxing)과 언박싱(Unboxing)
+
+- 박싱(Boxing)
+  - 기본 타입의 값을 포장 객체로 만드는 과정
+- 언박싱(Unboxing)
+  - 포장 객체에서 기본 타입의 값을 얻어내는 과정
+- 기본타입 박싱하는 방법
+  - 포장 클래스의 생성자 매개값으로 기본 타입의 값 또는 문자열을 넘겨주면 된다.
+
+![](./img/Boxing.PNG)
+
+- 생성자를 이용하지 않아도 각 포장 클래스마다 가지고 있는 정적 valueOf() 메소드를 사용할 수도 있다.
+
+```java
+Integer obj = Integer.valueOf(1000);
+Integer obj = Integer.valueOf("1000");
+```
+
+- 박싱된 포장 객체에서 다시 기본 타입의 값을 얻기 위해선?
+  - 언박싱하기 위해서는 각 포장 클래스마다 가지고 있는 "기본타입명+Value()" 메소드 호출
+
+![](./img/Unboxing.PNG)
+
+```java
+// 기본 타입의 값 박싱과 언박싱 예제
+public class BoxingUnBoxingExample {
+
+  public static void main(String[] args) {
+    // Boxing
+    Integer obj1 = new Integer(100);
+    Integer obj2 = new Integer("200");
+    Integer obj3 = Integer.valueOf("300");
+
+    // Unboxing
+    int value1 = obj1.intValue();
+    int value2 = obj2.intValue();
+    int value3 = obj3.intValue();
+
+    System.out.println(value1);
+    System.out.println(value2);
+    System.out.println(value3);
+  }
+
+}
+```
+
+![](./img/BoxingUnBoxing.PNG)
+
+### 자동 박싱과 언박싱
+
+- 기본 타입 값을 직접 박싱하지 않아도 자동적으로 박싱이 일어나는 경우
+  - 포장 클래스 타입에 기본값이 대입될 경우에 발생
+  - ex) int 타입의 값을 Integer 클래스 변수에 대입하면 자동 박싱이 일어난다.
+    - 힙 영역에 Integer 객체가 생성된다.
+
+```java
+Integer obj = 100;	// 자동 박싱
+```
+
+- 자동적으로 언박싱이 일어나는 경우
+  - 기본 타입에 포장 객체가 대입될 경우에 발생
+  - ex) Integer 객체를 int 타입 변수에 대입하거나, Integer 객체와 int 타입값을 연산하면 Integer 객체로부터 int 타입의 값이 자동 언박싱되어 연산됨
+
+```java
+Integer obj = new Integer(200);
+int value1 = obj;		// 자동 언박싱
+int value2 = obj + 100; // 자동 언박싱
+```
+
+```java
+// 컬렉션 객체에 int 값을 저장하면 자동 박싱이 일어나 Integer 객체가 저장된다.
+List<Integer> list = new ArrayList<Integer>();
+list.add(200); // 자동 박싱
+```
+
+- 자동 박싱과 언박싱은 자바 5부터 추가된 기능
+  - 자바 4 이전 버전에서는 직접 박싱과 언박싱을 해주어야 한다.
+
+```java
+// 자동 박싱과 언박싱 예제
+public class AutoBoxingUnBoxingExample {
+
+  public static void main(String[] args) {
+    // 자동 Boxing
+    Integer obj = 100;
+    System.out.println("value: " + obj.intValue());
+
+    // 대입 시 자동 Unboxing
+    int value = obj;
+    System.out.println("value: " + value);
+
+    // 연산 시 자동 Unboxing
+    int result = obj + 100;
+    System.out.println("result: " + result);
+  }
+
+}
+```
+
+![](./img/AutoBoxingUnBoxing.PNG)
+
+### 문자열을 기본 타입 값으로 변환
+
+- 포장 클래스의 주요 용도
+  - 기본 타입의 값을 박싱해서 포장 객체로 만드는 것
+  - 문자열을 기본 타입 값으로 변환할 때에도 많이 사용된다.
+- 대부분의 포장 클래스에는 "parse+기본타입" 명으로 되어 있는 정적(static) 메소드가 있다.
+  - 문자열을 매개값으로 받아 기본 타입 값으로 변환한다.
+
+![](./img/parse.PNG)
+
+```java
+// 문자열을 기본 타입 값으로 변환하는 예제
+public class StringToPrimitiveValueExample {
+
+  public static void main(String[] args) {
+    int value1 = Integer.parseInt("10");
+    double value2 = Double.parseDouble("3.14");
+    boolean value3 = Boolean.parseBoolean("true");
+
+    System.out.println("value1: " + value1);
+    System.out.println("value2: " + value2);
+    System.out.println("value3: " + value3);
+  }
+
+}
+```
+
+![](./img/parseEx.PNG)
+
+### 포장 값 비교
+
+- 포장 객체는 내부의 값을 비교하기 위해 ==와 != 연산자를 사용할 수 없다.
+  - 내부의 값 비교가 아닌 포장 객체의 참조를 비교하기 때문
+
+```java
+// 두 Integer 객체는 300이라는 동일한 값을 갖고 있지만 == 연산의 결과는 false
+Integer obj1 = 300;
+Integer obj2 = 300;
+System.out.println(obj1 == obj2);
+```
+
+- 내부의 값만 비교하려면 언박싱한 값을 얻어 비교해야 한다.
+- 하지만 박싱된 값이 표처럼 나와 있는 값이라면 ==와 != 연산자로 내부의 값을 바로 비교할 수 있다.
+  - 그 이외의 경우 박싱된 값을 ==와 != 연산자로 비교할 수 없다.
+
+![](./img/compare.PNG)
+
+- 포장 객체에 정확히 어떤 값이 저장될지 모르는 상황이라면 ==와 != 연산자는 사용하지 않는 것이 좋다.
+  - 직접 내부 값을 언박싱해서 비교하거나, equals() 메소드로 내부 값을 비교하는 것이 좋다.
+  - 포장 클래스의 equals() 메소드는 내부의 값을 비교하도록 오버라이딩되어 있다.
+
+```java
+// 포장 객체 비교
+public class ValueCompareExample {
+
+  public static void main(String[] args) {
+    System.out.println("[-128~127 초과값일 경우]");
+    Integer obj1 = 300;
+    Integer obj2 = 300;
+    System.out.println("==결과: " + (obj1 == obj2));
+    System.out.println("언박싱후 == 결과: " + (obj1.intValue() == obj2.intValue()));
+    System.out.println("equals() 결과: " + obj1.equals(obj2));
+    System.out.println();
+
+    System.out.println("[-128~127 범위값일 경우]");
+    Integer obj3 = 10;
+    Integer obj4 = 10;
+    System.out.println("==결과: " + (obj3 == obj4));
+    System.out.println("언박싱후 == 결과: " + (obj3.intValue() == obj4.intValue()));
+    System.out.println("equals() 결과: " + obj3.equals(obj4));
+  }
+
+}
+```
+
+![](./img/compareEx.PNG)
