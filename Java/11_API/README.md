@@ -2201,3 +2201,234 @@ public class PatternExample {
 - 이메일 검증에서 일치하지 않는 이유
   - naver.com 이 아닌 navercom 이라고 되어 있기 때문
   - 반드시 점(.)과 한 개 이상의 알파벳 또는 숫자가 포함되어야 한다.
+
+## Arrays 클래스
+
+- Arrays 클래스
+  - 배열 조작 기능을 가지고 있다.
+- 배열 조작이란?
+  - 배열의 복사, 항목 정렬, 항목 검색과 같은 기능
+  - 단순한 배열 복사는 System.arraycopy() 메소드를 사용할 수 있다.
+- Arrays는 추가적으로 항목 정렬, 항목 검색, 항목 비교와 같은 기능을 제공
+- Arrays 클래스가 가지고 있는 메소드들
+  - Arrays 클래스의 모든 메소드는 정적(static)이므로 Arrays 클래스로 바로 사용이 가능하다.
+
+![](./img/Arrays.PNG)
+
+### 배열 복사
+
+- 배열 복사를 위해 사용할 수 있는 메소드
+  - copyOf(원본배열, 복사할 길이), copyOfRange(원본배열, 시작인덱스, 끝인덱스)이다.
+- copyOf() 메소드
+  - 원본 배열의 0번 인덱스에서 복사할 길이만큼 복사한 타겟 배열을 리턴한다.
+  - 복사할 길이는 원본 배열의 길이보다 커도 되며, 타겟 배열의 길이가 된다.
+
+```java
+char[] arr1 = {'J', 'A', 'V', 'A'};
+char[] arr2 = Arrays.copyOf(arr1, arr1.length);
+// arr1[] 배열의 전체 항목을 복사해서 arr2[] 배열을 생성
+```
+
+- copyOfRange(원본배열, 시작인덱스, 끝인덱스)
+  - 원본 배열의 시작 인덱스에서 끝 인덱스까지 복사한 배열 리턴
+  - 시작 인덱스는 포함되지만, 끝 인덱스는 포함되지 않는다.
+
+```java
+char[] arr1 = {'J', 'A', 'V', 'A'};
+char[] arr2 = Arrays.copyOfRange(arr1, 1, 3);
+// arr1[] 배열 항목 중 1번, 2번 인덱스 항목을 arr2[] 배열의 0번, 1번 인덱스 항목으로 복사
+```
+
+- 단순히 배열을 복사할 목적이라면?
+  - Arrays 클래스를 사용하지 않고 System.arraycopy() 메소드를 이용할 수 있다.
+
+```java
+// System.arraycopy() 메소드
+System.arraycopy(Object src, int srcPos, Object dest, int destPos, int length)
+// scr: 원본배열 | srcPos: 원본시작인덱스 | dest: 타겟배열 | destPos: 타겟 시작인덱스
+// length: 복사개수
+```
+
+- 원본 시작 인덱스
+  - 원본 배열에서 복사할 항목의 시작 위치
+- 타겟 시작 인덱스
+  - 타겟 배열에서의 복사 시작 위치
+- 복사 개수
+  - 원본 시작 인덱스에서부터 몇 개의 항목을 복사할 것인지
+
+```java
+// Arrays와 System.arraycopy() 메소드를 이용한 배열의 복사
+import java.util.Arrays;
+
+public class ArrayCopyExample {
+
+  public static void main(String[] args) {
+    char[] arr1 = {'J', 'A', 'V', 'A'};
+
+    // 방법1
+    char[] arr2 = Arrays.copyOf(arr1, arr1.length); // arr1 전체를 arr2로 복사
+    System.out.println(Arrays.toString(arr2));
+
+    // 방법2
+    // arr1[1] ~ arr1[2] 를 arr3[0] ~ arr3[1]로 복사
+    char[] arr3 = Arrays.copyOfRange(arr1, 1, 3);
+    System.out.println(Arrays.toString(arr3));
+    
+    // 방법3
+    char[] arr4 = new char[arr1.length];
+    System.arraycopy(arr1, 0, arr4, 0, arr1.length); // arr1 전체를 arr4로 복사
+    for (int i = 0; i < arr4.length; i++) {
+      System.out.println("arr4[" + i + "]=" + arr4[i]);
+    }
+  }
+
+}
+```
+
+![](./img/copyOf.PNG)
+
+### 배열 항목 비교
+
+- Arrays의 equals()와 deepEquals()
+  - 배열 항목을 비교
+- equals()
+  - 1차 항목의 값만 비교
+- deepEquals()
+  - 1차 항목이 서로 다른 배열을 참조할 경우 중첩된 배열의 항목까지 비교한다.
+
+```java
+// 배열 복사 후 항목비교 예제
+import java.util.Arrays;
+
+public class EqualsExample {
+
+  public static void main(String[] args) {
+    int[][] original = {{1, 2}, {3, 4}};
+
+    // 얕은 복사후 비교
+    System.out.println("[얕은 복제후 비교]");
+    int[][] cloned1 = Arrays.copyOf(original, original.length);
+    System.out.println("배열 번지 비교: " + original.equals(cloned1));
+    System.out.println("1차 배열 항목값 비교: " + Arrays.equals(original, cloned1));
+    System.out.println("중첩 배열 항목값 비교: " + Arrays.deepEquals(original, cloned1));
+
+    // 깊은 복사후 비교
+    System.out.println("\n[깊은 복제후 비교]");
+    int[][] cloned2 = Arrays.copyOf(original, original.length);
+    cloned2[0] = Arrays.copyOf(original[0], original[0].length);
+    cloned2[1] = Arrays.copyOf(original[1], original[1].length);
+    System.out.println("배열 번지 비교: " + original.equals(cloned2));
+    System.out.println("1차 배열 항목값 비교: " + Arrays.equals(original, cloned2));
+    System.out.println("중첩 배열 항목값 비교: " + Arrays.deepEquals(original, cloned2));
+  }
+
+}
+```
+
+![](./img/ArrEquals.PNG)
+
+### 배열 항목 정렬
+
+- 기본 타입 또는 String 배열은 Arrays.sort() 메소드의 매개값으로 지정해주면 자동으로 오름차순 정렬이 된다.
+- 사용자 정의 클래스 타입일 경우
+  - 클래스가 Comparable 인터페이스를 구현하고 있어야 정렬이 된다.
+
+```java
+// Member 배열에서 Member 객체들을 name 필드값으로 정렬하고 싶을 때
+// Comparable 구현 클래스
+public class Member implements Comparable<Member> {
+  // Comparable<Member>는 Member 타입만 비교하기 위해 제네릭<>을 사용
+  String name;
+  Member(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public int compareTo(Member o) { // 비교값을 리턴하도록 오버라이딩
+    return name.compareTo(o.name); // String의 compareTo() 리턴값 사용
+  }
+}
+```
+
+- compareTo()  메소드
+  - 리턴값은 오름차순일 때 자신이 매개값보다 낮을 경우 음수, 같을 경우 0, 높을 경우 양수를 리턴하면 된다.
+
+```java
+// 배열 항목을 정렬하는 예제
+import java.util.Arrays;
+
+public class SortExample {
+
+  public static void main(String[] args) {
+    int[] scores = {99, 97, 98};
+    Arrays.sort(scores);
+    for (int i = 0; i < scores.length; i++) {
+      System.out.println("scores[" + i + "]=" + scores[i]);
+    }
+    System.out.println();
+
+    String[] names = {"홍길동", "김승빈", "박자바"};
+    Arrays.sort(names);
+    for (int i = 0; i < names.length; i++) {
+      System.out.println("names[" + i + "]=" + names[i]);
+    }
+    System.out.println();
+
+    Member m1 = new Member("홍길동");
+    Member m2 = new Member("김승빈");
+    Member m3 = new Member("박자바");
+    Member[] members = {m1, m2, m3};
+    Arrays.sort(members);
+    for (int i = 0; i < members.length; i++) {
+      System.out.println("members[" + i + "].name=" + members[i].name);
+    }
+  }
+
+}
+```
+
+![](./img/ArrSort.PNG)
+
+### 배열 항목 검색
+
+- 배열 검색
+  - 배열 항목에서 특정 값이 위치한 인덱스를 얻는 것
+- 배열 항목을 검색하려면?
+  - Arrays.sort() 메소드로 항목들을 오름차순으로 정렬한 후, Arrays.binarySearch() 메소드로 항목 찾기
+
+```java
+// 배열 검색 예제
+import java.util.Arrays;
+
+public class SearchExample {
+
+  public static void main(String[] args) {
+    // 기본 타입값 검색
+    // scores 배열이 정렬되면 99는 맨 마지막에 위치된다.(인덱스:2)
+    int[] scores = {99, 97, 98};
+    Arrays.sort(scores);
+    int index = Arrays.binarySearch(scores, 99);
+    System.out.println("찾은 인덱스: " + index);
+
+    // 문자열 검색
+    // names 배열이 정렬되면 홍길동은 맨 마지막에 위치된다.(인덱스:2)
+    String[] names = {"홍길동", "김승빈", "박자바"};
+    Arrays.sort(names);
+    index = Arrays.binarySearch(names, "홍길동");
+    System.out.println("찾은 인덱스: " + index);
+
+    // 객체 검색
+    // members 배열이 정렬되면 name 필드값이 홍길동인 Member 객체가 맨 마지막에 위치된다.(인덱스:2)
+    Member m1 = new Member("홍길동");
+    Member m2 = new Member("김승빈");
+    Member m3 = new Member("박자바");
+    Member[] members = {m1, m2, m3};
+    Arrays.sort(members);
+    index = Arrays.binarySearch(members, m1);
+    System.out.println("찾은 인덱스: " + index);
+  }
+
+}
+```
+
+![](./img/SearchExample.PNG)
