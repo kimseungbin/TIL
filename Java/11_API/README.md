@@ -2627,3 +2627,204 @@ public class ValueCompareExample {
 ```
 
 ![](./img/compareEx.PNG)
+
+## Math, Random 클래스
+
+### Math 클래스
+
+- java.lang.Math 클래스
+  - 수학 계산에 사용할 수 있는 메소드를 제공
+  - Math 클래스가 제공하는 메소드는 모두 정적(static)이므로 Math 클래스로 바로 사용이 가능하다.
+- Math 클래스가 제공하는 메소드를 설명한 표
+
+![](./img/Math.PNG)
+
+```java
+// Math 클래스의 수학 메소드 예제
+public class MathExample {
+
+  public static void main(String[] args) {
+    int v1 = Math.abs(-5);
+    double v2 = Math.abs(-3.14);
+    System.out.println("v1=" + v1);
+    System.out.println("v2=" + v2);
+
+    double v3 = Math.ceil(5.3);
+    double v4 = Math.ceil(-5.3);
+    System.out.println("v3=" + v3);
+    System.out.println("v4=" + v4);
+
+    double v5 = Math.floor(5.3);
+    double v6 = Math.floor(-5.3);
+    System.out.println("v5=" + v5);
+    System.out.println("v6=" + v6);
+
+    int v7 = Math.max(5, 9);
+    double v8 = Math.max(5.3, 2.5);
+    System.out.println("v7=" + v7);
+    System.out.println("v8=" + v8);
+
+    int v9 = Math.min(5, 9);
+    double v10 = Math.min(5.3, 2.5);
+    System.out.println("v9=" + v9);
+    System.out.println("v10=" + v10);
+
+    double v11 = Math.random();
+    System.out.println("v11=" + v11);
+
+    double v12 = Math.rint(5.3);
+    double v13 = Math.rint(5.7);
+    System.out.println("v12=" + v12);
+    System.out.println("v13=" + v13);
+
+    long v14 = Math.round(5.3);
+    long v15 = Math.round(5.7);
+    System.out.println("v14=" + v14);
+    System.out.println("v15=" + v15);
+
+    // 소수 셋째 자릿수에서 반올림하는 코드
+    // round() 메소드는 항상 소수점 첫째 자리에서 반올림해서 정수값을 리턴
+    // 원하는 소수 자릿수에서 반올림된 값을 얻기 위해서는?
+    // 반올림할 자릿수가 소수점 첫째 자리가 되도록 10^n 을 곱한 후, round() 메소드의 리턴값 얻기
+    // 다시 10^n.0을 나누어주면 된다.
+    double value = 12.3456;
+    double temp1 = value * 100;
+    long temp2 = Math.round(temp1);
+    double v16 = temp2 / 100.0;
+    System.out.println("v16=" + v16);
+  }
+
+}
+```
+
+![](./img/MathEx.PNG)
+
+- Math.random() 메소드는 0.0과 1.0 사이의 범위에 속하는 하나의 double 타입의 값을 리턴
+  - 0.0은 범위에 포함되고 1.0은 포함되지 않음
+
+```java
+0.0 <= Math.random() < 1.0
+```
+
+- Math.random()을 활용해 1부터 10까지의 정수 난수를 얻고 싶다면?
+
+  1. 각 변에 10을 곱하면 0.0 <= ... < 10.0 사이의 범위에 속하는 하나의 double 타입의 값을 얻을 수 있다.  
+
+     ```java
+     0.0*10 <= Math.random()*10 < 1.0*10
+     ```
+
+  2. 각 변을 int 타입으로 강제 타입 변환하면 0 <= ... < 10 사이의 범위에 속하는 하나의 int 타입의 값을 얻을 수 있다.  
+
+     ```java
+     (int) (0.0)*10 <= (int) (Math.random()*10) < (int) (1.0*10)
+     ```
+
+  3. 각 변에 1을 더하면 1 <= ... < 11 사이의 범위에 속하는 하나의 정수를 얻게 된다.  
+
+     ```java
+     (int) (0.0)*10 + 1 <= (int) (Math.random()*10) + 1 < (int) (1.0*10) + 1
+     ```
+
+  4. start <= ... < (start+n) 범위에 속하는 하나의 정수를 얻기 위한 연산식  
+
+     ```java
+     int num = (int) (Math.random() * n) + start;
+     ```
+
+- ex) 주사위 번호 뽑기
+
+```java
+int num = (int) (Math.random() * 6) + 1;
+```
+
+- ex) 로또 번호 뽑기
+
+```java
+int num = (int) (Math.random() * 45) + 1;
+```
+
+- 주사위의 눈을 Math.random() 메소드를 이용해 얻는 예제
+
+```java
+public class MathRandomExample {
+
+  public static void main(String[] args) {
+    int num = (int) (Math.random() * 6) + 1;
+    System.out.println("주사위 눈: " + num);
+  }
+
+}
+```
+
+![](./img/Random.PNG)
+
+### Random 클래스
+
+- java.util.Random 클래스
+  - 난수를 얻어내기 위해 다양한 메소드를 제공
+- Random 클래스
+  - Math.random() 메소드는 0.0에서 1 사이의 double 난수를 얻는 데만 사용
+  - 하지만 Random 클래스는 boolean, int, long, float, double 난수를 얻을 수 있다.
+  - 종자값(seed)을 설정할 수 있다.
+    - 종자값 : 난수를 만드는 알고리즘에 사용되는 값으로, 종자값이 같으면 같은 난수를 얻는다.
+- Random 클래스로부터 Random 객체를 생성하는 방법
+
+| 생성자            | 설명                                                    |
+| ----------------- | ------------------------------------------------------- |
+| Random()          | 호출 시마다 다른 종자값(현재시간 이용)이 자동 설정된다. |
+| Random(long seed) | 매개값으로 주어진 종자값이 설정된다.                    |
+
+- Random 클래스가 제공하는 메소드
+
+| 리턴값  | 메소드(매개 변수) | 설명                                                         |
+| ------- | ----------------- | ------------------------------------------------------------ |
+| boolean | nextBoolean()     | boolean 타입의 난수를 리턴                                   |
+| double  | nextDouble()      | double 타입의 난수를 리턴(0.0 <= ~ < 1.0)                    |
+| int     | nextInt()         | int 타입의 난수를 리턴(-2<sup>31</sup> <= ~ <= 2<sup>31</sup> - 1) |
+| int     | nextInt(int n)    | int 타입의 난수를 리턴(0 <= ~ < n)                           |
+
+```java
+// 로또의 여섯 숫자를 얻는 예제
+import java.util.Arrays;
+import java.util.Random;
+
+public class RandomExample {
+
+  public static void main(String[] args) {
+    // 선택번호
+    int[] selectNumber = new int[6]; // 선택 번호 6개가 저장될 배열
+    Random random = new Random(3); // 선택 번호를 얻기 위한 Random 객체 생성
+    System.out.println("선택 번호: ");
+    for (int i = 0; i < 6; i++) {
+      selectNumber[i] = random.nextInt(45) + 1; // 선택 번호를 얻어 배열에 저장
+      System.out.print(selectNumber[i] + " ");
+    }
+    System.out.println();
+
+    // 당첨번호
+    int[] winningNumber = new int[6]; // 당첨 번호 6개가 저장될 배열
+    random = new Random(5); // 당첨 번호를 얻기 위한 Random 객체 생성
+    System.out.println("당첨 번호: ");
+    for (int i = 0; i < 6; i++) {
+      winningNumber[i] = random.nextInt(45) + 1;
+      System.out.print(winningNumber[i] + " ");
+    }
+    System.out.println();
+
+    // 당첨 여부
+    Arrays.sort(selectNumber); // 비교하기 전 정렬
+    Arrays.sort(winningNumber); // 비교하기 전 정렬
+    boolean result = Arrays.equals(selectNumber, winningNumber); // 배열 항목 값 비교
+    System.out.print("당첨 여부: ");
+    if (result) {
+      System.out.println("1등에 당첨되셨습니다.");
+    } else {
+      System.out.println("당첨되지 않았습니다.");
+    }
+  }
+
+}
+```
+
+![](./img/RandomExample.PNG)
