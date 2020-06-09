@@ -2828,3 +2828,177 @@ public class RandomExample {
 ```
 
 ![](./img/RandomExample.PNG)
+
+## Date, Calendar 클래스
+
+- 날짜
+  - 프로그램에서 자주 사용되는 데이터
+- 자바는 시스템의 날짜 및 시각을 읽을 수 있도록 Date와 Calendar 클래스를 제공
+  - 모두 java.util 패키지에 포함되어 있다.
+
+### Date 클래스
+
+- Date는 날짜를 표현하는 클래스
+  - 객체 간에 날짜 정보를 주고 받을 떄 주로 사용된다.
+  - Date 클래스에는 여러 개의 생성자가 선언되어 있다.
+    - 하지만 대부분 Deprecated(비권장)되어 현재 Data() 생성자만 주로 사용
+  - Date() 생성자는 컴퓨터의 현재 날짜를 읽어 Date객체로 만든다.
+
+```java
+Date now = new Date();
+```
+
+- 현재 날짜를 문자열로 얻고 싶다면?
+  - toString() 메소드를 사용
+- toString() 메소드
+  - 영문으로 된 날짜를 리턴
+  - 만약 특정 문자열 포맷으로 얻고 싶다면 java.text.SimpleDateFormat 클래스를 이용
+
+```java
+// 현재 날짜를 출력하는 예제
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DateExample {
+
+  public static void main(String[] args) {
+    Date now = new Date();
+    String strNow1 = now.toString();
+    System.out.println(strNow1);
+
+    SimpleDateFormat sdf =
+        new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분 ss초");
+    String strNow2 = sdf.format(now);
+    System.out.println(strNow2);
+  }
+
+}
+```
+
+![](./img/DateExample.PNG)
+
+### Calendear 클래스
+
+- Calendar 클래스
+  - 달력을 표현한 클래스
+  - 추상(abstract) 클래스이므로 new 연산자를 사용해서 인스턴스를 생성할 수 없다.
+    - 날짜와 시간을 계산하는 방법이 지역과 문화, 나라에 따라 다르기 때문
+  - 날짜와 시간을 계산하는데 꼭 필요한 메소드들만 선언되어 있다.
+    - 특정한 역법을 따르는 계산 로직은 하위 클래스에서 구현하도록 되어 있다.
+    - 특별한 역법을 사용하는 경우가 아니라면 직접 하위 클래스를 만들 필요는 없다.
+  - Calendar 클래스의 정적 메소드인 getInstance() 메소드를 이용하면 현재 운영체제에 설정되어 있는 시간대를 기준으로 한 Calendar 하위 객체를 얻을 수 있다.
+
+```java
+Calendar now = Calendar.getInstance();
+```
+
+- Calendar 객체를 얻었다면 get() 메소드를 이용해 날짜와 시간에 대한 정보를 읽을 수 있다.
+
+```java
+int year = now.get(Calendar.YEAR);			// 년도를 리턴
+int month = now.get(Calendar.MONTH) + 1;	// 월을 리턴
+int day = now.get(Calendar.DAY_OF_MONTH);	// 일을 리턴
+int week = now.get(Calendar.DAY_OF_WEEK);	// 요일을 리턴
+int amPm = now.get(Calendar.AM_PM);			// 오전/오후를 리턴
+int hour = now.get(Calendar.HOUR);			// 시를 리턴
+int minute = now.get(Calendar.MINUTE);		// 분을 리턴
+int second = now.get(Calendar.SECOND);		// 초를 리턴
+```
+
+- get() 메소드를 호출할 때 사용한 매개값은 모두 Calendar 클래스에 선언되어 있는 상수들
+
+```java
+// 운영체제의 시간대를 기준으로 Calendar 얻기 예제
+import java.util.Calendar;
+
+public class calendarExample {
+
+  public static void main(String[] args) {
+    Calendar now = Calendar.getInstance();
+
+    int year = now.get(Calendar.YEAR);
+    int month = now.get(Calendar.MONTH) + 1;
+    int day = now.get(Calendar.DAY_OF_MONTH);
+
+    int week = now.get(Calendar.DAY_OF_WEEK);
+    String strWeek = null;
+    switch (week) {
+      case Calendar.MONDAY:
+        strWeek = "월";
+        break;
+      case Calendar.TUESDAY:
+        strWeek = "화";
+        break;
+      case Calendar.WEDNESDAY:
+        strWeek = "수";
+        break;
+      case Calendar.THURSDAY:
+        strWeek = "목";
+        break;
+      case Calendar.FRIDAY:
+        strWeek = "금";
+        break;
+      case Calendar.SATURDAY:
+        strWeek = "토";
+        break;
+      default:
+        strWeek = "일";
+    }
+
+    int amPm = now.get(Calendar.AM_PM);
+    String strAmPm = null;
+    if (amPm == Calendar.AM) {
+      strAmPm = "오전";
+    } else {
+      strAmPm = "오후";
+    }
+
+    int hour = now.get(Calendar.HOUR);
+    int minute = now.get(Calendar.MINUTE);
+    int second = now.get(Calendar.SECOND);
+
+    System.out.print(year + "년 ");
+    System.out.print(month + "월 ");
+    System.out.println(day + "일 ");
+    System.out.print(strWeek + "요일 ");
+    System.out.println(strAmPm + " ");
+    System.out.print(hour + "시 ");
+    System.out.print(minute + "분 ");
+    System.out.println(second + "초 ");
+  }
+
+}
+```
+
+![](./img/calendarExample.PNG)
+
+- 다른 시간대에 해당하는 날짜와 시간을 출력하기 위해서는? ex) 미국/로스엔젤레스의 현재 날짜와 시간
+  - Calendar 클래스의 오버로딩된 다른 getInstance() 메소드를 이용
+  - 알고 싶은 시간대의 java.util.TimeZone 객체를 얻어 Calendar.getInstance() 메소드의 매개값으로 넘겨주면 된다.
+
+```java
+TimeZone timeZone = TimeZone.getTimeZone("America/Los_Angeles");
+Calendar now = Calendar.getInstance(timeZone);
+```
+
+- TimeZone.getTimeZone() 메소드의 매개값
+  - TimeZone 클래스의 정적 메소드인 getAvailableIDs()를 호출하여 얻은 시간대 문자열 중 하나를 사용
+  - getAvailableIDs() 메소드의 리턴타입은 String 배열
+
+```java
+// 사용 가능한 시간대 문자열 출력
+import java.util.TimeZone;
+
+public class PrintTimeZoneID {
+
+  public static void main(String[] args) {
+    String[] availableIDs = TimeZone.getAvailableIDs();
+    for (String id : availableIDs) {
+      System.out.println(id);
+    }
+  }
+
+}
+```
+
+![](./img/TimeZone.PNG)
