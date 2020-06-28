@@ -3002,3 +3002,206 @@ public class PrintTimeZoneID {
 ```
 
 ![](./img/TimeZone.PNG)
+
+## Format 클래스
+
+- 형식 클래스
+  - java.text 패키지에 포함되어 있다.
+  - 숫자 형식을 위해 DecimalFormat,  
+    날짜 형식을 위해 SimpleDateFormat,  
+    매개 변수화된 문자열 형식을 위해 MessageFormat등을 제공
+
+### 숫자 형식 클래스(DecimalFormat)
+
+- DecimalFormat은 숫자 데이터를 원하는 형식으로 표현하기 위해 패턴을 사용한다.
+
+![](./img/DFormat.PNG)
+
+- 적용할 패턴을 선택했다면?
+  - DecimalFormat 생성자 매개값으로 지정해서 객체를 생성
+    - 그리고 format() 메소드를 호출해 패턴이 적용된 문자열을 얻으면 된다.
+
+```java
+DecimalFormat df = new DecimalFormat("#,###.0");
+String result = df.format(1234567.89);
+```
+
+- 다양한 패턴을 적용해서 얻은 문자열을 출력하는 예제
+
+```java
+import java.text.DecimalFormat;
+
+public class DecimalFormatExample {
+
+  public static void main(String[] args) {
+    double num = 1234567.89;
+
+    DecimalFormat df = new DecimalFormat("0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("0.0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("0000000000.00000");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("#");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("#.#");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("##########.#####");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("#.0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("+#.0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("-#.0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("#,###.0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("0.0E0");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("+#,### ; -#,###");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("#.# %");
+    System.out.println(df.format(num));
+
+    df = new DecimalFormat("\u00A4 #,###");
+    System.out.println(df.format(num));
+  }
+
+}
+```
+
+![](./img/DFormatEx.PNG)
+
+### 날짜 형식 클래스(SimpleDateFormat)
+
+- Date 클래스의 toString() 메소드는 영문으로된 날짜를 리턴
+  - 만약 특정 문자열 포맷으로 얻고 싶다면 java.text.SimpleDateFormat 클래스를 이용하면 된다.
+- SimpleDateFormat 클래스도 날짜를 원하는 형식으로 표현하기 위해 패턴을 사용한다.
+
+![](./img/SimpleDateFormat.PNG)
+
+- 패턴에는 자리수에 맞게 기호를 반복해서 작성할 수 있다.
+  - ex) yyyy는 년도를 4자리로 표시하라는 의미
+  - MM, dd는 각각 달과 일을 2자리로 표시하라는 의미
+- 적용할 패턴을 작성했다면?
+  - 패턴을 SimpleDateFormat의 생성자 매개값으로 지정해서 객체를 생성
+    - 그리고 format() 메소드를 호출하여 패턴이 적용된 문자열을 얻는다.
+
+```java
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+String strDate = sdf.format(new Date());
+```
+
+- 다양한 패턴을 적용해서 얻은 문자열을 출력하는 예제
+
+```java
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class SimpleDateFormatExample {
+
+  public static void main(String[] args) {
+    Date now = new Date();
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    System.out.println(sdf.format(now));
+
+    sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+    System.out.println(sdf.format(now));
+
+    sdf = new SimpleDateFormat("yyyy.MM.dd a HH:mm:ss");
+    System.out.println(sdf.format(now));
+
+    sdf = new SimpleDateFormat("오늘은 E요일");
+    System.out.println(sdf.format(now));
+
+    sdf = new SimpleDateFormat("올해의 D번째 날");
+    System.out.println(sdf.format(now));
+
+    sdf = new SimpleDateFormat("이달의 d번째 날");
+    System.out.println(sdf.format(now));
+  }
+
+}
+```
+
+![](./img/SimpleDateFormatExample.PNG)
+
+### 문자열 형식 클래스(MessageFormat)
+
+- MessageFormat 클래스
+  - 문자열에 데이터가 들어갈 자리를 표시해 두고, 프로그램이 실행하면서 동적으로 데이터를 삽입해 문자열을 완성시킬 수 있다.
+
+```java
+// 회원 정보 출력 가정
+회원 ID: kim
+회원 이름: 김승빈
+회원 전화: 010-123-1234
+```
+
+- 만약 id, name, tel이라는 변수에 회원 정보가 저장되어 있을 경우
+
+```java
+// 문자열 연결 연산자(+)로 문자열을 생성할 수 있다.
+String result = "회원 ID: " + id + "\n회원 이름: " + name + "\n회원 전화: " + tel;
+// + 연산자로 인해 복잡해 보이고, 전체 문자열을 파악하기 힘들다.
+```
+
+- MessageFormat 클래스를 사용하면 좀 더 깔끔하게 데이터를 삽입시켜준다.
+  - 전체 문자열도 쉽게 예측할 수 있다.
+
+```java
+String message = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
+String result = MessageFormat.format(message, id, name, tel);
+```
+
+- MessageFormat은 정적 format() 메소드를 호출해 완성된 문자열을 리턴시킨다.
+  - format() 메소드의 첫 번째 매개값 : 매개 변수화된 문자열을 저장
+  - 두 번째 이후의 매개값 : 인덱스 순서에 맞게 값을 나열  
+    값을 나열하는 대신, 배열을 대입해도 된다.
+
+```java
+String message = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
+Object[] arguments = { id, name, tel };
+String result = MessageFormat.format(text, arguments);
+```
+
+- 매개 변수화된 문자열을 이용해 회원 정보 및 SQL문을 출력하는 예제
+
+```java
+import java.text.MessageFormat;
+
+public class MessageFormatExample {
+
+  public static void main(String[] args) {
+    String id = "java";
+    String name = "김승빈";
+    String tel = "010-123-1234";
+
+    String text = "회원 ID: {0} \n회원 이름: {1} \n회원 전화: {2}";
+    String result1 = MessageFormat.format(text, id, name, tel);
+    System.out.println(result1);
+    System.out.println();
+
+    String sql = "insert into member values( {0}, {1}, {2} )";
+    Object[] arguments = {"'java'", "'김승빈'", "'010-123-1234'"};
+    String result2 = MessageFormat.format(sql, arguments);
+    System.out.println(result2);
+  }
+
+}
+```
+
+![](./img/msgFormatEx.PNG)
