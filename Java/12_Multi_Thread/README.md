@@ -1676,3 +1676,727 @@ public class ThreadGroupExample {
 ```
 
 ![](./img/ThreadGroupExample.PNG)
+
+## 스레드풀
+
+- 병렬 작업 처리가 많아지면 스레드 개수가 증가된다.
+  - 그에 따른 스레드 생성과 스케줄링으로 인해 CPU가 바빠져 메모리 사용량이 늘어난다.
+  - 따라서 애플리케이션의 성능이 저하된다.
+- 갑작스러운 병렬 작업의 폭증으로 인한 스레드의 폭증을 막으려면 스레드풀(ThreadPool)을 사용해야 한다.
+  - 스레드풀은 작업 처리에 사용되는 스레드를 제한된 개수만큼 정해 놓고 작업 큐(Queue)에 들어오는 작업들을 하나씩 스레드가 맡아 처리한다.
+  - 작업 처리가 끝난 스레드는 다시 작업 큐에서 새로운 작업을 가져와 처리한다.
+    - 작업 처리 요청이 폭증되어도 스레드의 전체 개수가 늘어나지 않는다.
+- 자바는 스레드풀을 생성하고 사용할 수 있도록 java.util.concurrent 패키지에서 ExecutorService 인터페이스와 Executors 클래스를 제공
+  - Executors의 다양한 정적 메소드를 이용해 ExecutorService 구현 객체를 만들 수 있다.
+    - 이것이 바로 스레드풀
+- ExecutorService가 동작하는 방식
+
+![](./img/ThreadPool.PNG)
+
+### 스레드풀 생성 및 종료
+
+#### 스레드풀 생성
+
+- ExecutorService 구현 객체는 Executors 클래스의 두 가지 메소드 중 하나를 이용해서 간편하게 생성할 수 있다.
+
+![](./img/Executors.PNG)
+
+- 초기 스레드 수는 ExecutorSerivce 객체가 생성될 때 기본적으로 생성되는 스레드 수를 말한다.
+  - 코어 스레드 수는 스레드 수가 증가된 후 사용되지 않는 스레드를 스레드풀에서 제거할 때 최소한 유지해야 할 스레드 수
+  - 최대 스레드 수는 스레드풀에서 관리하는 최대 스레드 수
+- newCachedThreadPool() 메소드로 생성된 스레드풀의 특징
+  - 초기 스레드 개수와 코어 스레드 개수는 0개
+  - 스레드 개수보다 작업 개수가 많으면 새 스레드를 생성시켜 작업을 처리
+  - 이론적으로는 int 값이 가질 수 있는 최대값만큼 스레드가 추가
+    - 운영체제의 성능과 상황에 따라 달라진다.
+  - 1개 이상의 스레드가 추가되었을 경우
+    - 60초 동안 추가된 스레드가 아무 작업을 하지 않으면 추가된 스레드를 종료하고 풀에서 제거
+
+```java
+// newCachedThreadPool()을 호출해서 ExecutorService 구현 객체를 얻는 코드
+ExecutorService executorService = Executors.newCachedThreadPool();
+```
+
+- newFixedThreadPool(int nThreads) 메소드로 생성된 스레드풀
+  - 초기 스레드 개수는 0개, 코어 스레드 수는 nThreads
+  - 스레드 개수보다 작업 개수가 많으면 새 스레드를 생성시켜 작업을 처리
+  - 최대 스레드 개수는 매개값으로 준 nThreads
+  - 스레드가 작업을 처리하지 않고 놀고 있더라도 스레드 개수가 줄지 않는다.
+
+```java
+// CPU 코어의 수만큼 최대 스레드를 사용하는 스레드풀 생성하는 코드
+ExecutorService executorService = Executors.newFixedThreadPool(
+    Runtime.getRuntime().availableProcessors()
+);
+```
+
+- newCachedThreadPool()과 newFixedThreadPool() 메소드를 사용하지 않고 코어 스레드 개수와 최대 스레드 개수를 설정하고 싶다면?
+  - 직접 ThreadPoolExecutor 객체를 생성하면 된다.
+    - newCachedThreadPool()과 newFixedThreadPool() 메소드도 내부적으로 ThreadPoolExecutor 객체를 생성해서 리턴한다.
+
+```java
+// 초기 스레드 개수가 0개, 코어 스레드 개수가 3개, 최대 스레드 개수가 100개인 스레드풀을 생성하는 예시코드
+// 만약 코어 스레드 3개를 제외한 나머지 추가된 스레드가 120초 동안 놀고 있을 경우 해당 스레드를 제거해서 스레드 수를 관리
+ExecutorService threadPool = new ThreadPoolExecutor(
+	3,		// 코어 스레드 개수
+	100,	// 최대 스레드 개수
+	120L,	// 놀고 있는 시간
+	TimeUnit.SECONDS, // 놀고 있는 시간 단위
+	new SynchronousQueue<Runnable>() // 작업 큐
+);
+```
+
+#### 스레드풀 종료
+
+- 스레드풀의 스레드는 기본적으로 데몬 스레드가 아니다.
+  - 때문에 main 스레드가 종료되더라도 작업을 처리하기 위해 계속 실행 상태로 남아있다.
+  - main() 메소드가 실행이 끝나도 애플리케이션 프로세스는 종료되지 않는다.
+  - 애플리케이션을 종료하려면 스레드풀을 종료시켜 스레드들이 종료상태가 되도록 처리해주어야 한다.
+- ExecutorService는 종료와 관련한 세 개의 메소드를 제공
+
+![](./img/shutdown.PNG)
+
+- 남아 있는 작업을 마무리하고 스레드풀을 종료할 때에는?
+  - shutdown()을 일반적으로 호출
+  - 남아있는 작업과는 상관없이 강제로 종료할 때에는 shutdownNow()를 호출
+
+```java
+executorService.shutdown();
+또는
+executorService.shutdownNow();
+```
+
+### 작업 생성과 처리 요청
+
+#### 작업 생성
+
+- 하나의 작업은 Runnable 또는 Callable 구현 클래스로 표현한다.
+  - Runnable과 Callable의 차이점
+    - 작업 처리 완료 후 리턴값이 있느냐 없느냐
+- Runnable과  Callable 구현 클래스를 작성하는 방법
+
+![](./img/Runnable_Callable.PNG)
+
+- Runnable의 run() 메소드
+  - 리턴값이 없다.
+- Callable의 call() 메소드
+  - 리턴값이 있다.
+  - 리턴타입은 implements Callable<T>에서 지정한 T 타입
+- 스레드풀의 스레드는 작업 큐에서 Runnable 또는 Callable 객체를 가져와 run() 과 call() 메소드를 실행한다.
+
+#### 작업 처리 요청
+
+- 작업 처리 요청이란?
+  - ExecutorService의 작업 큐에 Runnable 또는 Callable 객체를 넣는 행위
+- ExecutorService는 작업 처리 요청을 위해 두 가지 종류의 메소드를 제공
+
+![](./img/execute_submit.PNG)
+
+- execute()와 submit() 메소드의 차이점
+  - execute()는 작업 처리 결과를 받지 못한다.
+  - submit()은 작업 처리 결과를 받을 수 있도록 Future를 리턴
+  - execute()는 작업 처리 도중 예외가 발생하면 스레드가 종료되고 해당 스레드는 스레드풀에서 제거
+    - 따라서 스레드풀은 다른 작업 처리를 위해 새로운 스레드를 생성한다.
+  - submit()은 작업 처리 도중 예외가 발생해도 스레드는 종료되지 않고 다음 작업을 위해 재사용된다.
+    - 따라서 가급적 스레드의 생성 오버헤더를 줄이기 위해 submit()을 사용하는 것이 좋음
+- 예제
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
+public class ExecuteExample {
+
+  public static void main(String[] args) throws Exception {
+    // 최대 스레드 개수가 2인 스레드풀 생성
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+    for (int i = 0; i < 10; i++) {
+      Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+          // 스레드 총 개수 및 작업 스레드 이름 출력
+          ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executorService;
+          int poolSize = threadPoolExecutor.getPoolSize();
+          String threadName = Thread.currentThread().getName();
+          System.out.println("[총 스레드 개수: " + poolSize + "] 작업 스레드 이름: " + threadName);
+          // 예외 발생
+          int value = Integer.parseInt("삼"); // NumberFormatException이 발생하도록 유도
+        }
+      };
+
+      // execute()와 submit() 메소드로 각각 처리요청 했을 경우
+      executorService.execute(runnable);  // 작업 처리 요청
+      //executorService.submit(runnable);
+
+      Thread.sleep(10); // 콘솔에 출력 시간을 주기 위해 0.01초 일시 정지
+    }
+
+    executorService.shutdown(); // 스레드풀 종료
+  }
+  
+}
+```
+
+- execute() 메소드로 작업 처리를 요청한 경우
+
+![](./img/ExecuteExample.PNG)
+
+- 스레드풀의 스레드 최대 개수 2는 변함이 없다.
+  - 하지만 실행 스레드의 이름을 보면 모두 다른 스레드가 작업을 처리하고있음.
+    - 왜냐하면 작업 처리 도중 예외가 발생했기 때문에 해당 스레드는 제거되고 새 스레드가 계속 생성되기 때문
+- submit() 메소드로 작업 처리를 요청한 경우
+
+![](./img/submit.PNG)
+
+- 예외가 발생하더라도 스레드가 종료되지 않고 계속 재사용되어 다른 작업을 처리하고 있다.
+
+### 블로킹 방식의 작업 완료 통보
+
+- ExecutorService의 submit() 메소드
+  - 매개값으로 준 Runnable 또는 Callable 작업을 스레드풀의 작업 큐에 저장하고 즉시 Future 객체를 리턴
+
+![](./img/submitMethod.PNG)
+
+- Future 객체는 작업 결과가 아니라 작업이 완료될 때까지 기다렸다가(지연했다가=블로킹되었다가) 최종 결과를 얻는데 사용
+  - Future를 지연 완료(pending completion) 객체라고 한다.
+- Future의 get() 메소드를 호출하면 스레드가 작업을 완료할 때까지 블로킹되었다가 작업을 완료하면 처리 결과를 리턴한다.
+  - 블로킹을 사용하는 작업 완료 통보 방식
+- Future가 가지고 있는 get() 메소드
+
+![](./img/getMethod.PNG)
+
+- 리턴 타입V
+  - sumbit(Runnable task, V result)의 두 번째 매개값인 V 타입이거나 submit(Callable\<V> task)의 Callable 타입 파라미터 V 타입
+- 세 가지 submit() 메소드별 Future의 get() 메소드가 리턴하는 값
+
+![](./img/getMethodReturn.PNG)
+
+- Future를 이용한 블로킹 방식의 작업 완료 통보에서 주의할 점
+  - 작업을 처리하는 스레드가 작업을 완료하기 전까지는 get() 메소드가 블로킹되므로 다른 코드를 실행할 수 없다.
+  - 만약 UI를 변경하고 이벤트를 처리하는 스레드가 get() 메소드를 호출하면?
+    - 작업을 완료하기 전까지 UI를 변경할 수도 없고 이벤트를 처리할 수도 없게 된다.
+    - 때문에 get() 메소드를 호출하는 스레드는 새로운 스레드이거나 스레드풀의 또 다른 스레드가 되어야 한다.
+
+![](./img/getCallThread.PNG)
+
+- Future 객체는 작업 결과를 얻기 위한 get() 메소드 이외에도 아래와 같은 메소드를 제공
+
+![](./img/FutureMethod.PNG)
+
+- cancel() 메소드
+  - 작업을 취소하고 싶을 경우 호출
+  - 작업이 시작되기 전이라면?
+    - mayInterruptIfRunning 매개값과는 상관 없이 작업 취소 후 true를 리턴
+  - 작업이 진행 중이라면
+    - mayInterruptIfRunning 매개값이 true일 경우에만 작업 스레드를 interrupt한다.
+  - 작업이 완료되었을 경우 또는 어떤 이유로 인해 취소될 수 없다면?
+    - cance() 메소드는 false를 리턴
+- isCancelled() 메소드
+  - 작업이 완료되기 전 작업이 취소되었을 경우에만 true를 리턴
+- isDone() 메소드
+  - 작업이 정상적, 예외, 취소 등 어떤 이유에서건 작업이 완료되었다면 true를 리턴
+
+#### 리턴값이 없는 작업 완료 통보
+
+- 리턴값이 없는 작업일 경우
+  - Runnable 객체로 생성하면 된다.
+
+```java
+// Runnable 객체를 생성하는 방법
+Runnable task = new Runnable() {
+    @Override
+    public void run() {
+        // 스레드가 처리할 작업 내용
+    }
+};
+```
+
+- 결과값이 없는 작업 처리 요청은 submit(Runnable task) 메소드를 이용하면 된다.
+  - 결과값이 없어도 Future객체를 리턴한다.
+    - 스레드가 작업 처리를 정상적으로 완료했는지, 아니면 작업 처리 도중에 예외가 발생했는지 확인하기 위함
+
+```java
+Future future = executorService.submit(task);
+```
+
+- 작업 처리가 정상적으로 완료되었다면?
+  - Future의 get() 메소드는 null을 리턴
+- 스레드가 작업처리 도중 Interrupt 되면?
+  - InterruptedException을 발생
+- 작업 처리 도중 예외가 발생하면?
+  - ExecutionException을 발생
+
+```java
+// 예외 처리 코드가 필요하다.
+try {
+    future.get();
+} catch (InterruptedException e) {
+    // 작업 처리 도중 스레드가 interrupt 될 경우 실행할 코드
+} catch (ExecutionException e) {
+    // 작업 처리 도중 예외가 발생된 경우 실행할 코드
+}
+```
+
+- 리턴값이 없고 단순히 1부터 10까지의 합을 출력하는 작업을 Runnable 객체로 생성하고, 스레드풀의 스레드가 처리하도록 요청한 예제
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class NoResultExample {
+
+  public static void main(String[] args) {
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+
+    System.out.println("[작업 처리 요청]");
+    Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+        int sum = 0;
+        for (int i = 1; i <= 10; i++) {
+          sum += i;
+        }
+        System.out.println("[처리 결과] " + sum);
+      }
+    };
+    Future future = executorService.submit(runnable);
+
+    try {
+      future.get();
+      System.out.println("[작업 처리 완료]");
+    } catch (Exception e) {
+      System.out.println("[실행 예외 발생함] " + e.getMessage());
+    }
+
+    executorService.shutdown();
+  }
+
+}
+```
+
+![](./img/NoResultExample.PNG)
+
+#### 리턴값이 있는 작업 완료 통보
+
+- 스레드풀의 스레드가 작업을 완료한 후에 애플리케이션이 처리 결과를 얻어야 된다면?
+  - 작업 객체를 Callable로 생성하면 된다.
+- Callable 객체를 생성하는 예시
+
+```java
+// 주의할 점으로, 제네릭 타입 파라미터 T는 call() 메소드가 리턴하는 타입이 되도록 한다.
+Callable<T> task = new Callable<T>() {
+    @Override
+    public T call() throws Exception {
+        // 스레드가 처리할 작업 내용
+        return T;
+    }
+};
+```
+
+- Callable 작업의 처리 요청은 Runnable 작업과 마찬가지로 ExecutorService의 submit() 메소드를 호출하면 된다.
+- submit() 메소드는 작업 큐에 Callable 객체를 저장하고 즉시 Future\<T>를 리턴한다.
+  - 이때 T는 call() 메소드가 리턴하는 타입
+
+```java
+Future<T> future = executorService.submit(task)
+```
+
+- 스레드풀의 스레드가 Callable 객체의 call() 메소드를 모두 실행하고 T 타입의 값을 리턴하면?
+  - Future\<T>의 get() 메소드는 블로킹이 해제되고 T 타입의 값을 리턴하게 된다.
+
+```java
+try {
+    T result = future.get();
+} catch (InterruptedException e) {
+    // 작업 처리 도중 스레드가 interrupt 될 경우 실행할 코드
+} catch (ExecutionException e) {
+    // 작업 처리 도중 예외가 발생된 경우 실행할 코드
+}
+```
+
+- 1부터 10까지의 합을 리턴하는 작업을 Callable 객체로 생성하고, 스레드풀의 스레드가 처리하도록 요청한 예제
+
+```java
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class ResultByCallableExample {
+
+  public static void main(String[] args) {
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+
+    System.out.println("[작업 처리 요청]");
+    Callable<Integer> task = new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        int sum = 0;
+        for (int i = 1; i <= 10; i++) {
+          sum += i;
+        }
+        return sum;
+      }
+    };
+    Future<Integer> future = executorService.submit(task);
+
+    try {
+      int sum = future.get();
+      System.out.println("[처리 결과] " + sum);
+      System.out.println("[작업 처리 완료]");
+    } catch (Exception e) {
+      System.out.println("[실행 예외 발생함] " + e.getMessage());
+    }
+
+    executorService.shutdown();
+  }
+
+}
+```
+
+![](./img/ResultByCallableExample.PNG)
+
+#### 작업 처리 결과를 외부 객체에 저장
+
+- 상황에 따라 스레드가 작업한 결과를 외부 객체에 저장해야 할 경우
+  - ex) 스레드가 작업 처리를 완료하고 외부 Result 객체에 작업 결과를 저장하면  ,
+    애플리케이션이 Result 객체를 사용해서 어떤 작업을 진행할 수 있다.
+  - 대개 Result 객체는 공유 객체가 되어서 두 개 이상의 스레드 작업을 취합할 목적으로 이용된다.
+
+![](./img/Result.PNG)
+
+- 그림과 같은 작업을 하기 위해 ExecutorService의 submit(Runnable task, V result) 메소드를 사용할 수 있다.
+  - V가 Result 타입이 된다.
+  - 메소드를 호출하면 즉시 Future\<V>가 리턴된다.
+    - Future의 get() 메소드를 호출하면 스레드가 작업을 완료할 때까지 블로킹되었다가 작업을 완료하면 V타입 객체를 리턴
+    - 리턴된 객체는 submit()의 두 번째 매개값으로 준 객체와 동일하다.
+      - 차이점 : 스레드 처리 결과가 내부에 저장되어 있다.
+
+```java
+Result result = ...;
+Runnable task = new Task(result);
+Future<Result> future = executorService.submit(task, result);
+result = future.get();
+```
+
+- 작업 객체는 Runnable 구현 클래스로 생성
+  - 주의할 점 : 스레드에서 결과를 저장하기 위해 외부 Result 객체를 사용해야 하므로 생성자를 통해 Result 객체를 주입받도록 해야 한다.
+
+```java
+Class Task implements Runnable {
+    Result result;
+    Task(Result result) {
+        this.result = result;
+    }
+    @Override
+    public void run() {
+        // 작업 코드
+        // 처리 결과를 result에 저장
+    }
+}
+```
+
+- 1부터 10까지의 합을 계산하는 두 개의 작업을 스레드풀에 처리 요청하고,  
+  각각의 스레드가 작업 처리를 완료한 후 산출된 값을 외부 Result 객체에 누적하는 예제
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class ResultByRunnableExample {
+
+  public static void main(String[] args) {
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+
+    System.out.println("[작업 처리 요청]");
+    class Task implements Runnable { // 작업 정의
+      Result result;
+      Task(Result result) {
+        this.result = result; // 외부 Result 객체를 필드에 저장
+      }
+      @Override
+      public void run() {
+        int sum = 0;
+        for (int i = 1; i <= 10; i++) {
+          sum += i;
+        }
+        result.addValue(sum); // Result 객체에 작업 결과 저장
+      }
+    }
+    
+    Result result = new Result();
+    Runnable task1 = new Task(result);
+    Runnable task2 = new Task(result);
+    Future<Result> future1 = executorService.submit(task1, result);
+    Future<Result> future2 = executorService.submit(task2, result);
+
+    try {
+      result = future1.get();
+      result = future2.get();
+      System.out.println("[처리 결과] " + result.accumValue);
+      System.out.println("[작업 처리 완료]");
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("[실행 예외 발생함] " + e.getMessage());
+    }
+
+    executorService.shutdown();
+  }
+
+}
+
+class Result { // 처리 결과를 저장하는 Result 클래스
+  int accumValue;
+  synchronized void addValue(int value) {
+    accumValue += value;
+  }
+}
+```
+
+![](./img/ResultByRunnableExample.PNG)
+
+#### 작업 완료 순으로 통보
+
+- 작업의 양과 스레드 스케줄링에 따라서 먼저 요청한 작업이 나중에 완료되는 경우도 발생
+  - 여러 개의 작업들이 순차적으로 처리될 필요성이 없고, 처리 결과도 순차적으로 이용할 필요가 없다면?
+    - 작업 처리가 완료된 것부터 결과를 얻어 이용하면 된다.
+- 스레드풀에서 작업 처리가 완료된 것만 통보받는 방법
+  - CompletionService를 이용
+    - CompletionService처리 완료된 작업을 가져오는 poll()과 take() 메소드를 제공
+
+![](./img/CompletionService.PNG)
+
+- CompletionService 구현 클래스는 ExecutorCompletionService\<V>이다.
+  - 객체를 생성할 때 생성자 매개값으로 ExecutorService를 제공하면 된다.
+
+```java
+ExecutorService executorService = Executors.newFixedThreadPool(
+    Runtime.getRuntime().availableProcessors()
+);
+CompletionService<V> completionService = new ExecutorCompletionService<V>(
+    executorService
+);
+```
+
+- poll()과 take() 메소드를 이용해 처리 완료된 작업의 Future를 얻으려면?
+  - CompletionService의 submit() 메소드로 작업 처리 요청을 해야 한다.
+
+```java
+completionService.submit(Callable<V> task);
+completionService.submit(Runnable task, V result);
+```
+
+- take() 메소드를 호출하여 완료된 Callable 작업이 있을 때까지 블로킹되었다가 완료된 작업의 Future를 얻고, get() 메소드로 결과값을 얻어내는 예시
+
+```java
+executorService.submit(new Runnable()) { // 스레드풀의 스레드에서 실행하도록 함
+    @Override
+    public void run() {
+        while(true) { // 애플리케이션이 종료될 때까지 반복 실행해야 하므로 스레드풀의 스레드에서 실행하는 것이 좋다.
+            try {
+                Future<Integer> future = completionService.take(); // 완료된 작업이 있을 때까지 블로킹
+                												   // 완료된 작업이 있으면 Future를 리턴
+                int value = future.get(); // get()은 블로킹되지 않고 바로 작업 결과를 리턴
+                System.out.println("[처리 결과] " + value);
+            } catch (Exception e) {
+                break;
+            }
+        }
+    }
+}
+```
+
+- take() 메소드가 리턴하는 완료된 작업은 submit()으로 처리 요청한 작업의 순서가 아니다.
+  - 작업의 내용에 따라 먼저 요청한 작업이 나중에 완료될 수도 있기 때문
+- 더 이상 완료된 작업을 가져올 필요가 없다면?
+  - take() 블로킹에서 빠져나와 while문을 종료해야 한다.
+- ExecutorService의 shutdownNow()를 호출하면?
+  - take()에서 InterruptedException이 발생
+    - catch 절에서 break가 되어 while문을 종료(위의 예시)
+
+```java
+// 3개의 Callable 작업을 처리 요청하고 처리가 완료되는 순으로 작업의 결과값을 콘솔에 출력하는 예제
+import java.util.concurrent.*;
+
+public class CompletionServiceExample extends Thread {
+
+  public static void main(String[] args) {
+    ExecutorService executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+
+    // CompletionService 생성
+    CompletionService<Integer> completionService =
+        new ExecutorCompletionService<Integer>(executorService);
+
+    System.out.println("[작업 처리 요청]");
+    for (int i = 0; i < 3; i++) {
+      // 스레드풀에게 작업 처리 요청
+      completionService.submit(new Callable<Integer>() {
+        @Override
+        public Integer call() throws Exception {
+          int sum = 0;
+          for (int i = 1; i <= 10; i++) {
+            sum += i;
+          }
+          return sum;
+        }
+      });
+    }
+
+    System.out.println("[처리 완료된 작업 확인]");
+    executorService.submit(new Runnable() { // 스레드풀의 스레드에서 실행하도록 함
+      @Override
+      public void run() {
+        while (true) {
+          try {
+            Future<Integer> future = completionService.take(); // 완료된 작업 가져오기
+            int value = future.get();
+            System.out.println("[처리 결과] " + value);
+          } catch (Exception e) {
+            break;
+          }
+        }
+      }
+    });
+
+    // 3초 후 스레드풀 종료
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) { }
+    executorService.shutdownNow();
+  }
+
+}
+```
+
+![](./img/CompletionServiceExample.PNG)
+
+### 콜백 방식의 작업 완료 통보
+
+- 콜백(callback)이란?
+  - 애플리케이션이 스레드에게 작업 처리를 요청한 후, 스레드가 작업을 완료하면 특정 메소드를 자동 실행하는 기법
+  - 자동 실행되는 메소드를 콜백 메소드라 한다.
+- 블로킹방식과 콜백 방식 비교
+
+![](./img/blocking_callback.PNG)
+
+- 블로킹 방식은 작업 처리를 요청한 후 작업이 완료될 때까지 블로킹
+- 콜백 방식은 작업 처리를 요청한 후 결과를 기다릴 필요 없이 다른 기능을 수행할 수 있다.
+  - 작업 처리가 완료되면 자동적으로 콜백 메소드가 실행되어 결과를 알 수 있기 때문
+- ExecutorService는 콜백을 위한 별도의 기능을 제공하지 않는다.
+  - 하지만 Runnable 구현 클래스를 작성할 때 콜백 기능을 구현할 수 있다.
+- 우선 콜백 메소드를 가진 클래스가 있어야 한다.
+  - 직접 정의해도 좋고 NIO 패키지에 포함되어 있는 java.nio.channels.CompletionHandler 인터페이스를 이용해도 좋다.
+    - 비동기 통신에서 콜백 객체를 만들 때 사용된다.
+
+```java
+// CompletionHandler를 이용해서 콜백 객체를 만드는 방법
+CompletionHandler<V, A> callback = new CompletionHandler<V, A>() {
+    @Override
+    public void completed(V result, A attachment) {
+    }
+    @Override
+    public void failed(Throwable exc, A attachment) {
+    }
+};
+```
+
+- CompletionHandler 는 completed()와 failed() 메소드가 있다.
+  - completed()는 작업을 정상 처리 완료했을 때 호출되는 콜백 메소드
+  - faile()는 작업 처리 도중 예외가 발생했을 때 호출되는 콜백 메소드
+- CompletionHandler의 V 타입 파라미터는 결과값의 타입, A는 첨부값의 타입
+  - 첨부값은 콜백 메소드에 결과값 이외에 추가적으로 전달하는 객체
+  - 만약 첨부값이 필요 없다면 A는 Void로 지정
+
+```java
+// 작업 처리 결과에 따라 콜백 메소드를 호출하는 Runnable 객체
+Runnable task = new Runnable() {
+    @Override
+    public void run() {
+        try {
+            // 작업 처리
+            V result = ...;
+            callback.completed(result, null); // 작업을 정상 처리했을 경우 호출
+        } catch (Exception e) {
+            callback.failed(e, null); // 예외가 발생 했을 경우 호출
+        }
+    }
+};
+// 작업 처리가 정상적으로 완료되면 completed() 콜백 메소드를 호출해서 결과값을 전달하고,
+// 예외가 발생하면 failed() 콜백 메소드를 호출해서 예외 객체를 전달한다.
+```
+
+- 예제
+
+```java
+// 두 개의 문자열을 정수화해서 더하는 작업을 처리하고 결과를 콜백 방식으로 통보하는 예제
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class CallbackExample {
+
+  private ExecutorService executorService;
+
+  public CallbackExample() {
+    executorService = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors()
+    );
+  }
+
+  // 콜백 메소드를 가진 CompletionHandler 객체 생성
+  private CompletionHandler<Integer, Void> callback = new CompletionHandler<Integer, Void>() {
+    @Override
+    public void completed(Integer result, Void attachment) {
+      System.out.println("completed() 실행: " + result);
+    }
+
+    @Override
+    public void failed(Throwable exc, Void attachment) {
+      System.out.println("failed() 실행: " + exc.toString());
+    }
+  };
+
+  public void doWork(final String x, final String y) {
+    Runnable task = new Runnable() {
+      @Override
+      public void run() {
+        try {
+          int intX = Integer.parseInt(x);
+          int intY = Integer.parseInt(y);
+          int result = intX + intY;
+          callback.completed(result, null); // 정상 처리했을 경우 호출
+        } catch (NumberFormatException e) {
+          callback.failed(e, null);
+        }
+      }
+    };
+    executorService.submit(task); // 스레드풀에게 작업 처리 요청
+  }
+
+  public void finish() {
+    executorService.shutdownNow(); // 스레드풀 종료
+  }
+
+  public static void main(String[] args) {
+    CallbackExample example = new CallbackExample();
+    example.doWork("3", "3");
+    example.doWork("3", "삼");
+    example.finish();
+  }
+
+}
+```
+
+![](./img/CallbackExample.PNG)
