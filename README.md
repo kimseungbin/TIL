@@ -56,8 +56,14 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/HTML/09_Tag_Structure">레이아웃을 위한 공간분할 태그</a></li>
     </ul>
 </details>
-
-
-
+<details>
+    <summary><b>JavaScript</b></summary>
+    <p>
+        공부사이트: <a href="https://poiemaweb.com/">PoiemaWeb</a>
+    </p>
+    <ul>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/01_What_is_JavaScript">자바스크립트란</a></li>
+    </ul>
+</details>
 
 
