@@ -37,6 +37,7 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/10_Exception_Handling">예외 처리</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/11_API">기본 API</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/12_Multi_Thread">멀티 스레드</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/Java/13_Generic">제네릭</a></li>
     </ul>
 </details>
 <details>
@@ -65,5 +66,6 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/01_What_is_JavaScript">자바스크립트란</a></li>
     </ul>
 </details>
+
 
 
