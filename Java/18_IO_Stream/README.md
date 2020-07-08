@@ -1385,6 +1385,6 @@ FileInputStream fis = new FileInputStream("C:/Temp2/image.gif");
 
 // 두 번째 방법
 File file = new File("C:/Temp2/image.gif");
-FileInputStream fis = new FileInputStream("file");
+FileInputStream fis = new FileInputStream(file);
 ```
 
