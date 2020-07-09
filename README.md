@@ -61,13 +61,18 @@ Today I Learned
 </details>
 <details>
     <summary><b>JavaScript</b></summary>
-    <p>
-        공부사이트: <a href="https://poiemaweb.com/">PoiemaWeb</a>
-    </p>
+    <dl>
+        <dt>공부사이트</dt>
+        <dd><a href="https://poiemaweb.com/">01. PoiemaWeb</a><br>
+            <a href="https://ko.javascript.info/"> 02~. 모던 JavaScript 튜토리얼</a>
+        </dd>
+    </dl>
     <ul>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/01_What_is_JavaScript">자바스크립트란</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/02_JavaScript_Basic">자바스크립트 기초</a></li>
     </ul>
 </details>
+
 
 
 
