@@ -70,10 +70,9 @@ Today I Learned
     <ul>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/01_What_is_JavaScript">자바스크립트란</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/02_JavaScript_Basic">자바스크립트 기초</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/03_Code_Quality">코드 품질</a></li>
     </ul>
 </details>
-
-
 
 
 
