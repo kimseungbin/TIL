@@ -601,7 +601,7 @@ String[] names = new String[30];
 - 예를 들어 배열 scores의 0, 1, 2 인덱스에 각각 83, 90, 75를 저장하는 코드는 아래와 같다.
 
 ```java
-int[] scores = new[3];
+int[] scores = new int[3];
 scores[0] = 83;
 scores[1] = 90;
 scores[2] = 75;
