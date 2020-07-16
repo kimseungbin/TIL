@@ -72,7 +72,7 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/02_JavaScript_Basic">자바스크립트 기초</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/03_Code_Quality">코드 품질</a></li>
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/04_Object_Basic">객체 기초</a></li>
-        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/5_Data_Structure_And_Data_Type">자료구조와 자료형</a></li>
+        <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/05_Data_Structure_And_Data_Type">자료구조와 자료형</a></li>
     </ul>
 </details>
 
