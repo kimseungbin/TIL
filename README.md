@@ -75,6 +75,13 @@ Today I Learned
         <li><a href="https://github.com/seungbin-kim/TIL/tree/master/JavaScript/05_Data_Structure_And_Data_Type">자료구조와 자료형</a></li>
     </ul>
 </details>
+<details>
+    <summary><b>디자인패턴(DesignPatterns)</b></summary>
+    <ul>
+        <li><a href="https://github.com/seungbin-kim/TIL/blob/master/DesignPatterns/DesignPatterns.pdf">주요 디자인패턴</a></li>
+    </ul>
+</details>
+
 
 
 
