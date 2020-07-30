@@ -4,16 +4,14 @@
 
 - Java 5부터 제네릭(Generic) 타입이 새로 추가되었다.
   - 제네릭 타입을 이용함으로써 잘못된 타입이 사용될 수 있는 문제를 컴파일 과정에서 제거할 수 있게 되었다.
-- 제네릭은 컬렉션, 람다식, 스트림, NIO에서 널리 사용된다.
-- API 도큐먼트를 보면 제네릭 표현이 많다.
 - 제네릭은 클래스와 인터페이스, 그리고 메소드를 정의할 때 타입(type)을 파라미터(parameter)로 사용할 수 있도록 한다.
   - 타입 파라미터는 코드 작성 시 구체적은 타입으로 대체되어 다양한 코드를 생성하도록 해준다.
 - 제네릭을 사용하는 코드는 비제네릭 코드에 비해 이점을 가지고 있다.
 
 ### 컴파일 시 강한 타입 체크를 할 수 있다.
 
-- 자바 컴파일러는 코드에서 잘못 사용된 타입 때문에 발생하는 문제점을 제거하기 위해 제니릭 코드에 대해 강한 타입 체크를 한다.
-  - 실행 시 타입 에러가 나는 것보다 컴파일 시에 미리 타입을 강하게 체크해서 에러를 사전에 방지하는 것이 좋다.
+- 자바 컴파일러는 제네릭 코드에 대해 강한 타입 체크를 한다.
+  - 컴파일 시에 미리 타입을 강하게 체크해서 에러를 사전에 방지
 
 ### 타입 변환(casting)을 제거한다.
 
@@ -35,7 +33,7 @@ list.add("hello");
 String str = list.get(0); // 타입 변환을 하지 않음
 ```
 
-## 제네릭 타입(class<T>, interface<T>)
+## 제네릭 타입(class\<T>, interface\<T>)
 
 - 제네릭 타입은 타입을 파라미터로 가지는 클래스와 인터페이스를 말한다.
   - 제네릭 타입은 클래스 또는 인터페이스 이름 뒤에 "<>" 부호가 붙고, 사이에 타입 파라미터가 위치한다.
@@ -47,8 +45,8 @@ public interface 인터페이스명<T> { ... }
 ```
 
 - 타입 파라미터는 변수명과 동일한 규칙에 따라 작성할 수 있다.
-  - 일반적으로 대문제 알파벳 한 글자로 표현한다.
-- 제네릭 타입을 실제 코드에어 사용하려면 타입 파라미터에 구체적인 타입을 지정해야 한다.
+  - 일반적으로 대문자 알파벳 한 글자로 표현한다.
+- 제네릭 타입을 실제 코드에서 사용하려면 타입 파라미터에 구체적인 타입을 지정해야 한다.
 - 타입 파라미터를 사용해야 하는 이유?
 
 ```java
@@ -243,6 +241,7 @@ public class BoxExample {
 ```java
 // Product<T, M> 제네릭 타입을 정의하고 사용하는 예제
 public class Product<T, M> {
+    
   private T kind;
   private M model;
 
@@ -261,6 +260,7 @@ public class Product<T, M> {
   public void setModel(M model) {
     this.model = model;
   }
+    
 }
 ```
 
@@ -501,7 +501,7 @@ public class BoundedTypeParameterExample {
 
 - 코드에서 ?를 일반적으로 와일드카드(wildcard)라고 부른다.
   - 제네릭 타입을 매개값이나 리턴 타입으로 사용할 때 구체적인 타입 대신 와일드카드를 세 가지 형태로 사용할 수 있다.
-- 제네릭 타입<?> : Unbounded Wildcards (제한 없음)  
+- 제네릭타입<?> : Unbounded Wildcards (제한 없음)  
   타입 파라미터를 대치하는 구체적인 타입으로 모든 클래스나 인터페이스 타입이 올 수 있다.
 - 제네릭타입<? extends 상위타입> : Upper Bounded Wildcards (상위 클래스 제한)  
   타입 파라미터를 대치하는 구체적인 타입으로 상위 타입이나 하위 타입만 올 수 있다.
@@ -622,7 +622,7 @@ public class WildCardExample {
     studentCourse.add(new Student("학생"));
     studentCourse.add(new HighStudent("고등학생"));
 
-    Course<Student> highStudentCourse = new Course<>("고등학생과정", 5);
+    Course<HighStudent> highStudentCourse = new Course<>("고등학생과정", 5);
     highStudentCourse.add(new HighStudent("고등학생"));
 
     registerCourse(personCourse);
